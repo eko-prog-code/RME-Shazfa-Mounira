@@ -277,8 +277,8 @@ const Home = () => {
                     <li key={patientId}>
                         <Link to={`/emr/${patientId}`}>
                             <div className="patient-info">
-                                <span className="patient-name">{patients[patientId].nama}</span>
-                                <span className="patient-dob">{patients[patientId].tanggal_lahir}</span>
+                                <span className="patient-name">{patients[patientId].name}</span>
+                                <span className="patient-dob">{patients[patientId].birthDate}</span>
                             </div>
                         </Link>
                     </li>
