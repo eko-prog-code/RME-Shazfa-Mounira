@@ -16,7 +16,7 @@ const UpdateTreatment = () => {
     diagnosis: '',
     images: [],
   });
-
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,36 +47,22 @@ const UpdateTreatment = () => {
 
   const handleImageDrop = (acceptedFiles) => {
     const updatedImages = acceptedFiles.map(file =>
-      Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      })
+      URL.createObjectURL(file)
     );
+  
+    const updatedImageArray = [...updatedTreatmentData.images];
+    if (updatedImageArray.length > 0) {
+      updatedImageArray[0] = updatedImages[0];
+    } else {
+      updatedImageArray.push(updatedImages[0]);
+    }
+  
     setUpdatedTreatmentData({
       ...updatedTreatmentData,
-      images: [...updatedTreatmentData.images, ...updatedImages],
+      images: updatedImageArray,
     });
-  };
 
-  const removeImage = (index) => {
-    const updatedImages = [...updatedTreatmentData.images];
-    updatedImages.splice(index, 1);
-    setUpdatedTreatmentData({
-      ...updatedTreatmentData,
-      images: updatedImages,
-    });
-  };
-
-  const renderImagePreview = () => {
-    return updatedTreatmentData.images.map((image, index) => (
-      <div key={index} className="UpdateTreatment-image-container">
-        <img
-          src={image.preview}
-          alt={`Preview ${index}`}
-          className="UpdateTreatment-image"
-        />
-        <button onClick={() => removeImage(index)}>Remove</button>
-      </div>
-    ));
+    setUpdateSuccess(true);
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -111,12 +97,9 @@ const UpdateTreatment = () => {
       <h2 className="UpdateTreatment-heading">Update Treatment</h2>
       {treatmentData && (
         <div>
-          {/* Display existing treatment details */}
           <p>Treatment ID: {treatmentId}</p>
           <p>Tanggal dan Waktu: {treatmentData.timestamp}</p>
-          {/* Display other existing treatment details */}
 
-          {/* Update treatment form */}
           <div className="UpdateTreatment-form">
             <label htmlFor="complaint" className="UpdateTreatment-label">Keluhan:</label>
             <input
@@ -138,7 +121,7 @@ const UpdateTreatment = () => {
               className="UpdateTreatment-input"
             />
 
-            <label htmlFor="Observation" className="UpdateTreatment-label">Observation:</label>
+            <label htmlFor="Observation" className="UpdateTreatment-label">Tanda Vital:</label>
             <input
               type="text"
               id="Observation"
@@ -162,10 +145,9 @@ const UpdateTreatment = () => {
               <input {...getInputProps()} />
               <p>Drag 'n' drop some images here, or click to select files</p>
             </div>
-            <div className="UpdateTreatment-image-preview">
-              {renderImagePreview()}
-            </div>
-
+            {updateSuccess && (
+              <p className="UpdateTreatment-success-message">Update Images berhasil!</p>
+            )}
 
             <label htmlFor="diagnosis" className="UpdateTreatment-label">Diagnosa Medis:</label>
             <input
@@ -177,9 +159,8 @@ const UpdateTreatment = () => {
               className="UpdateTreatment-input"
             />
 
-            {/* Add more input fields as needed */}
-
             <button onClick={updateTreatment} className="UpdateTreatment-button">Update Treatment</button>
+
           </div>
         </div>
       )}

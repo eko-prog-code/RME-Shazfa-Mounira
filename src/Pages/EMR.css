@@ -1,5 +1,16 @@
 /* EMR.css */
 
+/* Tambahkan CSS berikut pada file stylesheet Anda */
+.biodata-pasien {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.biodata-pasien h5, .biodata-pasien p {
+  margin: 8px 0;
+}
+
 .emr-container {
   display: flex;
 }

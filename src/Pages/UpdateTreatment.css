@@ -1,15 +1,13 @@
-/* UpdateTreatment.css */
-
-/* UpdateTreatment.css */
 
 .UpdateTreatment-container {
-    width: 400px;
+    width: 620px;
     padding: 20px;
     border: 1px solid #007bff; /* Border color */
     box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Box shadow with blue color */
     border-radius: 8px; /* Optional: Add border-radius for rounded corners */
     background-color: #fff; /* Background color */
-    margin-top: 20px;
+    margin-top: 80px;
+    margin-bottom: 80px;
     
     /* Center the container horizontally */
     position: absolute;
@@ -61,5 +59,34 @@
   
   .UpdateTreatment-button:hover {
     background-color: #0056b3;
+  }
+  
+
+  .UpdateTreatment-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px dashed #28a745; /* Warna hijau */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Efek transisi pada hover */
+  }
+  
+  .UpdateTreatment-dropzone:hover {
+    background-color: #28a745; /* Warna hijau lebih gelap pada hover */
+    color: #fff; /* Warna teks putih pada hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Efek bayangan pada hover */
+  }
+  
+  .UpdateTreatment-dropzone p {
+    margin: 0;
+  }
+  
+  .UpdateTreatment-uploaded-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
   }
   

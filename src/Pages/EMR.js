@@ -131,11 +131,13 @@ const EMR = () => {
                 <div className="patient-details">
                     {patientDetails && (
                         <div>
-                            <h4>Biodata Pasien</h4>
-                            <h5>NIK: {patientDetails.identifier}</h5>
-                            <p>Nomor RM: {patientDetails.number_medical_records}</p>
-                            <p>Nama: {patientDetails.name}</p>
-                            <p>Tanggal Lahir: {patientDetails.birthDate}</p>
+                            <div className="biodata-pasien">
+                                <h4>Biodata Pasien</h4>
+                                <h5>NIK         : {patientDetails.identifier}</h5>
+                                <p>Nomor RM     : {patientDetails.number_medical_records}</p>
+                                <p>Nama         : {patientDetails.name}</p>
+                                <p>Tanggal Lahir: {patientDetails.birthDate}</p>
+                            </div>
                             <div>
                                 <h5>
                                     <span className="allergies-label">Alergi</span>

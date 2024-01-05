@@ -112,7 +112,7 @@ const NewTreatment = () => {
       // Persiapkan data yang akan dikirim ke Firebase Realtime Database
       const dataToSend = {
         timestamp: new Date().getTime(),
-        birthDate: tanggal,  // Mengganti dari 'tanggal' menjadi 'birthDate'
+        Encounter_period_start: tanggal,  
         identifier: id,  // Mengganti dari 'id' menjadi 'identifier'
         complaint: complaint,
         condition_physical_examination: condition_physical_examination,
