@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { useDropzone } from 'react-dropzone'; // Import useDropzone
+import { useDropzone } from 'react-dropzone';
 import './UpdateTreatment.css';
 
 const UpdateTreatment = () => {
@@ -14,7 +14,7 @@ const UpdateTreatment = () => {
     Observation: '',
     Medication: '',
     diagnosis: '',
-    images: [], // Add images array field
+    images: [],
   });
 
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const UpdateTreatment = () => {
           Observation: response.data.Observation || '',
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
-          images: response.data.images || [], // Add images array field
+          images: response.data.images || [],
         });
       })
       .catch((error) => {
@@ -46,9 +46,14 @@ const UpdateTreatment = () => {
   };
 
   const handleImageDrop = (acceptedFiles) => {
+    const updatedImages = acceptedFiles.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file)
+      })
+    );
     setUpdatedTreatmentData({
       ...updatedTreatmentData,
-      images: [...updatedTreatmentData.images, ...acceptedFiles],
+      images: [...updatedTreatmentData.images, ...updatedImages],
     });
   };
 
@@ -59,6 +64,19 @@ const UpdateTreatment = () => {
       ...updatedTreatmentData,
       images: updatedImages,
     });
+  };
+
+  const renderImagePreview = () => {
+    return updatedTreatmentData.images.map((image, index) => (
+      <div key={index} className="UpdateTreatment-image-container">
+        <img
+          src={image.preview}
+          alt={`Preview ${index}`}
+          className="UpdateTreatment-image"
+        />
+        <button onClick={() => removeImage(index)}>Remove</button>
+      </div>
+    ));
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -145,16 +163,7 @@ const UpdateTreatment = () => {
               <p>Drag 'n' drop some images here, or click to select files</p>
             </div>
             <div className="UpdateTreatment-image-preview">
-              {updatedTreatmentData.images.map((image, index) => (
-                <div key={index} className="UpdateTreatment-image-container">
-                  <img
-                    src={URL.createObjectURL(image)}
-                    alt={`Preview ${index}`}
-                    className="UpdateTreatment-image"
-                  />
-                  <button onClick={() => removeImage(index)}>Remove</button>
-                </div>
-              ))}
+              {renderImagePreview()}
             </div>
 
 
