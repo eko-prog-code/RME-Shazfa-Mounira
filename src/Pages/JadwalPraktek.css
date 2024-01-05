@@ -1,0 +1,91 @@
+/* JadwalPraktek.css */
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.title {
+  font-size: 2xl;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.new-form-container {
+  border: 2px solid #ccc;
+  /* Adjust border styles as needed */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  /* Adjust border-radius as needed */
+  width: 70%;
+  padding: 10px;
+}
+
+/* Media query for mobile */
+@media (max-width: 600px) {
+  .new-form-container {
+    width: 90%;
+  }
+}
+
+.input-container {
+  margin-bottom: 4px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 1px;
+  font-size: small;
+  color: #606060;
+}
+
+.input-field {
+  border: 1px solid #000;
+  padding: 2px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.button {
+  margin-top: 4px;
+  padding: 2px 4px;
+  background-color: #3490dc;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-container {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.modal-title {
+  font-size: 2xl;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.modal-button {
+  padding: 2px 4px;
+  background-color: #005;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}

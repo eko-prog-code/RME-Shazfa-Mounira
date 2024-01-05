@@ -1,0 +1,65 @@
+/* UpdateTreatment.css */
+
+/* UpdateTreatment.css */
+
+.UpdateTreatment-container {
+    width: 400px;
+    padding: 20px;
+    border: 1px solid #007bff; /* Border color */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Box shadow with blue color */
+    border-radius: 8px; /* Optional: Add border-radius for rounded corners */
+    background-color: #fff; /* Background color */
+    margin-top: 20px;
+    
+    /* Center the container horizontally */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .UpdateTreatment-link {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .UpdateTreatment-link:hover {
+    text-decoration: underline;
+  }
+  
+  .UpdateTreatment-heading {
+    color: #333;
+  }
+  
+  .UpdateTreatment-form {
+    margin-top: 20px;
+  }
+  
+  .UpdateTreatment-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .UpdateTreatment-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ddd; /* Optional: Add border to input fields */
+    border-radius: 4px; /* Optional: Add border-radius for rounded corners */
+  }
+  
+  .UpdateTreatment-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px; /* Optional: Add border-radius for rounded corners */
+  }
+  
+  .UpdateTreatment-button:hover {
+    background-color: #0056b3;
+  }
+  

@@ -1,0 +1,319 @@
+/* EMR.css */
+
+.emr-container {
+  display: flex;
+}
+
+.patient-details {
+  flex: 40%;
+  padding: 4px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: #f0f0f0;
+  background-image: url('https://firebasestorage.googleapis.com/v0/b/rekammedis-70985.appspot.com/o/letter%20(2).png?alt=media&token=deb6d30a-31e2-4a67-bae4-f8eb4be42cd6');
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-size: 100%;
+  height: 1200px; /* Default height for desktop */
+  @media (max-width: 767px) {
+    height: 320px; /* Height for mobile devices with width less than 767px */
+  }
+}
+
+/* Default style for h4 elements in patient details */
+.patient-details h4 {
+  font-size: 30px; /* Default font size for PC */
+  padding-left: 100px; /* Default padding for PC */
+  padding-top: 52px; /* Corrected padding-top for PC */
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .patient-details h4 {
+    font-size: 16px;
+    padding-left: 8px;
+    padding-top: 10px; /* Adjusted padding-top for better spacing on mobile devices */
+    margin-bottom: 5px; /* Added margin-bottom for better spacing on mobile devices */
+  }
+}
+
+/* Default style for <p> elements in patient details */
+.patient-details p {
+  font-size: 22px; /* Default font size for PC */
+  padding-left: 100px; /* Padding default for PC */
+  padding-top: 3px; /* Adjusted top spacing */
+  padding-bottom: 3px; /* Adjusted bottom spacing */
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .patient-details p {
+    padding-left: 12px;
+    font-size: 12px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 5px; /* Added margin-bottom for better spacing on mobile devices */
+  }
+}
+
+/* Default style for h5 elements in patient details */
+.patient-details h5 {
+  font-size: 22px; /* Default font size for PC */
+  padding-left: 100px; /* Default padding for PC */
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .patient-details h5 {
+    padding-top: 10px;
+    font-size: 14px;
+    padding-left: 12px;
+    margin-bottom: 5px; /* Added margin-bottom for better spacing on mobile devices */
+  }
+}
+
+/* CSS for "Ubah Alergi" and "Ubah Riwayat Kesehatan" text */
+.patient-details h4.ubah-text {
+  font-size: 18px; /* Adjust the font size for PC */
+  padding-top: 20px; /* Adjust the padding-top for PC */
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .patient-details h4.ubah-text {
+    font-size: 14px;
+    padding-top: 10px;
+    padding-left: 12px;
+    margin-bottom: 5px; /* Added margin-bottom for better spacing on mobile devices */
+  }
+}
+
+/* Default style for home-link */
+.home-link img {
+  width: 140px; /* Default size for PC */
+  height: auto;
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .home-link img {
+    width: 60px;
+  }
+}
+
+/* Adjust the size of the my-input placeholder text */
+.my-input::placeholder {
+  font-size: 24px; /* Placeholder text size */
+  max-width: 80%; /* Maximum width of the placeholder, adjust as needed */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.my-input {
+  width: 60%; /* Default width for PC */
+  height: 32px; /* Default height for PC */
+  max-width: 74%;
+  border-radius: 12px;
+  margin-left: 20px;
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .my-input {
+    width: 40%;
+    height: 14px;
+    max-width: 76%;
+    border: 2px solid #0077cc; /* Adjust the thickness as needed */
+  }
+}
+
+/* Media query for PC view */
+@media (min-width: 768px) {
+  .my-input {
+    margin-left: 70px;
+  }
+}
+
+/* CSS for Save button on PC view */
+.button-save {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 auto;
+  display: block;
+}
+
+/* CSS for Save button on mobile devices */
+@media (max-width: 767px) {
+  .button-save {
+    width: 100%;
+  }
+}
+
+.treatments {
+  flex: 60%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  @media (max-width: 767px) {
+    width: 65%;
+  }
+}
+
+h2 {
+  text-align: center;
+}
+
+.patient-details p {
+  margin: 5px 0;
+}
+
+.treatments a {
+  display: block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #0077cc;
+  font-weight: bold;
+}
+
+.treatment-card {
+  border: 2px solid #A2FF86;
+  box-shadow: #A2FF86;
+  border-radius: 30px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Default style for delete icon */
+.delete-icon {
+  width: 26px;
+  height: 26px;
+  background-color: red;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .delete-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* CSS to set the color of the "X" icon to white */
+.delete-icon svg {
+  color: white;
+}
+
+/* CSS for the "X" button next to text on PC view */
+.delete-icon-wrapper {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+/* CSS for the "X" button below text on mobile devices */
+@media (max-width: 767px) {
+  .delete-icon-wrapper {
+    display: block;
+    margin-top: 5px;
+  }
+}
+
+/* Mobile view (width <= 768px) */
+@media (max-width: 768px) {
+  .emr-container {
+    display: flex;
+  }
+
+  .patient-details {
+    width: 35%;
+    padding: 4px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+  }
+
+  .treatments {
+    width: 65%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+  }
+}
+
+/* Media query to set the image size for the .treatments class */
+@media (max-width: 767px) {
+  .treatments img {
+    width: 100px;
+    height: auto;
+  }
+
+  /* Add a default padding top for h3 elements */
+  .patient-details h4 {
+    padding-top: 4px; /* Adjust this value for mobile devices */
+    padding-left: 12px;
+  }
+}
+
+/* EMR.css */
+
+/* ... (CSS yang sudah ada) ... */
+
+/* Default style for delete treatment icon */
+.delete-treatment-icon {
+  width: 26px; /* Default size for PC */
+  height: 26px; /* Default size for PC */
+  cursor: pointer;
+}
+
+/* Media query for mobile devices with a maximum width of 767px */
+@media (max-width: 767px) {
+  .delete-treatment-icon {
+      width: 14px; /* Size for mobile devices */
+      height: 16px; /* Size for mobile devices */
+  }
+}
+
+/* ... (CSS yang sudah ada) ... */
+
+/* Tambahkan ke file NewTreatment.css atau file CSS terpisah */
+
+.treatment-image {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.treatment-image:hover {
+  transform: scale(1.1);
+}
+
+.zoom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.zoomed-image {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+
+
+
