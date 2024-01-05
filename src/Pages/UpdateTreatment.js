@@ -13,10 +13,11 @@ const UpdateTreatment = () => {
     Observation: '',
     Medication: '',
     diagnosis: '',
+    images: [], // Add images array
     // Add additional fields as needed
   });
 
-  const navigate = useNavigate(); // Changed for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`)
@@ -28,6 +29,7 @@ const UpdateTreatment = () => {
           Observation: response.data.Observation || '',
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
+          images: response.data.images || [], // Include images field
           // Add additional fields as needed
         });
       })
@@ -37,23 +39,42 @@ const UpdateTreatment = () => {
   }, [id, treatmentId]);
 
   const handleInputChange = (e) => {
-    setUpdatedTreatmentData({
-      ...updatedTreatmentData,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === 'images') {
+      const imagesArray = Array.from(e.target.files);
+      setUpdatedTreatmentData({
+        ...updatedTreatmentData,
+        images: imagesArray,
+      });
+    } else {
+      setUpdatedTreatmentData({
+        ...updatedTreatmentData,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const updateTreatment = () => {
-    const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"); // Generate timestamp using date-fns
+    const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
     const updatedDataWithTimestamp = {
       ...updatedTreatmentData,
       timestamp: timestamp,
     };
 
-    axios.put(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`, updatedDataWithTimestamp)
+    const formData = new FormData();
+    Object.entries(updatedDataWithTimestamp).forEach(([key, value]) => {
+      if (key === 'images') {
+        value.forEach((image, index) => {
+          formData.append(`image${index}`, image);
+        });
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    axios.put(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`, formData)
       .then(response => {
         console.log('Treatment updated successfully:', response.data);
-        navigate(`/emr/${id}`); // Navigate to EMR page
+        navigate(`/emr/${id}`);
       })
       .catch(error => {
         console.error('Error updating treatment:', error);
@@ -66,12 +87,9 @@ const UpdateTreatment = () => {
       <h2 className="UpdateTreatment-heading">Update Treatment</h2>
       {treatmentData && (
         <div>
-          {/* Display existing treatment details */}
           <p>Treatment ID: {treatmentId}</p>
           <p>Tanggal dan Waktu: {treatmentData.timestamp}</p>
-          {/* Display other existing treatment details */}
 
-          {/* Update treatment form */}
           <div className="UpdateTreatment-form">
             <label htmlFor="complaint" className="UpdateTreatment-label">Keluhan:</label>
             <input
@@ -123,7 +141,15 @@ const UpdateTreatment = () => {
               className="UpdateTreatment-input"
             />
 
-            {/* Add more input fields as needed */}
+            <label htmlFor="images" className="UpdateTreatment-label">Images:</label>
+            <input
+              type="file"
+              id="images"
+              name="images"
+              onChange={handleInputChange}
+              className="UpdateTreatment-input"
+              multiple // Allow multiple file selection
+            />
 
             <button onClick={updateTreatment} className="UpdateTreatment-button">Update Treatment</button>
           </div>
