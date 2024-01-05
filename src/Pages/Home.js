@@ -253,7 +253,7 @@ const Home = () => {
                                             {Object.keys(patients).map((patientId) => (
                                                 <li key={patientId} className="patient-list-item">
                                                     <div className="patient-info">
-                                                        {patients[patientId].nama} - {patients[patientId].tanggal_lahir}
+                                                        {patients[patientId].name} - {patients[patientId].birthDate}
                                                     </div>
                                                     <button
                                                         className="view-emr-button"
