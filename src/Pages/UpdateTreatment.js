@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useDropzone } from 'react-dropzone'; // Import useDropzone
 import './UpdateTreatment.css';
 
 const UpdateTreatment = () => {
@@ -13,15 +14,15 @@ const UpdateTreatment = () => {
     Observation: '',
     Medication: '',
     diagnosis: '',
-    images: [], // Add images array
-    // Add additional fields as needed
+    images: [], // Add images array field
   });
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`)
-      .then(response => {
+    axios
+      .get(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`)
+      .then((response) => {
         setTreatmentData(response.data);
         setUpdatedTreatmentData({
           complaint: response.data.complaint || '',
@@ -29,29 +30,41 @@ const UpdateTreatment = () => {
           Observation: response.data.Observation || '',
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
-          images: response.data.images || [], // Include images field
-          // Add additional fields as needed
+          images: response.data.images || [], // Add images array field
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error fetching treatment data:', error);
       });
   }, [id, treatmentId]);
 
   const handleInputChange = (e) => {
-    if (e.target.name === 'images') {
-      const imagesArray = Array.from(e.target.files);
-      setUpdatedTreatmentData({
-        ...updatedTreatmentData,
-        images: imagesArray,
-      });
-    } else {
-      setUpdatedTreatmentData({
-        ...updatedTreatmentData,
-        [e.target.name]: e.target.value,
-      });
-    }
+    setUpdatedTreatmentData({
+      ...updatedTreatmentData,
+      [e.target.name]: e.target.value,
+    });
   };
+
+  const handleImageDrop = (acceptedFiles) => {
+    setUpdatedTreatmentData({
+      ...updatedTreatmentData,
+      images: [...updatedTreatmentData.images, ...acceptedFiles],
+    });
+  };
+
+  const removeImage = (index) => {
+    const updatedImages = [...updatedTreatmentData.images];
+    updatedImages.splice(index, 1);
+    setUpdatedTreatmentData({
+      ...updatedTreatmentData,
+      images: updatedImages,
+    });
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: 'image/*',
+    onDrop: handleImageDrop,
+  });
 
   const updateTreatment = () => {
     const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
@@ -60,23 +73,16 @@ const UpdateTreatment = () => {
       timestamp: timestamp,
     };
 
-    const formData = new FormData();
-    Object.entries(updatedDataWithTimestamp).forEach(([key, value]) => {
-      if (key === 'images') {
-        value.forEach((image, index) => {
-          formData.append(`image${index}`, image);
-        });
-      } else {
-        formData.append(key, value);
-      }
-    });
-
-    axios.put(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`, formData)
-      .then(response => {
+    axios
+      .put(
+        `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`,
+        updatedDataWithTimestamp
+      )
+      .then((response) => {
         console.log('Treatment updated successfully:', response.data);
         navigate(`/emr/${id}`);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error updating treatment:', error);
       });
   };
@@ -87,9 +93,12 @@ const UpdateTreatment = () => {
       <h2 className="UpdateTreatment-heading">Update Treatment</h2>
       {treatmentData && (
         <div>
+          {/* Display existing treatment details */}
           <p>Treatment ID: {treatmentId}</p>
           <p>Tanggal dan Waktu: {treatmentData.timestamp}</p>
+          {/* Display other existing treatment details */}
 
+          {/* Update treatment form */}
           <div className="UpdateTreatment-form">
             <label htmlFor="complaint" className="UpdateTreatment-label">Keluhan:</label>
             <input
@@ -131,6 +140,24 @@ const UpdateTreatment = () => {
               className="UpdateTreatment-input"
             />
 
+            <div {...getRootProps()} className="UpdateTreatment-dropzone">
+              <input {...getInputProps()} />
+              <p>Drag 'n' drop some images here, or click to select files</p>
+            </div>
+            <div className="UpdateTreatment-image-preview">
+              {updatedTreatmentData.images.map((image, index) => (
+                <div key={index} className="UpdateTreatment-image-container">
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`Preview ${index}`}
+                    className="UpdateTreatment-image"
+                  />
+                  <button onClick={() => removeImage(index)}>Remove</button>
+                </div>
+              ))}
+            </div>
+
+
             <label htmlFor="diagnosis" className="UpdateTreatment-label">Diagnosa Medis:</label>
             <input
               type="text"
@@ -141,15 +168,7 @@ const UpdateTreatment = () => {
               className="UpdateTreatment-input"
             />
 
-            <label htmlFor="images" className="UpdateTreatment-label">Images:</label>
-            <input
-              type="file"
-              id="images"
-              name="images"
-              onChange={handleInputChange}
-              className="UpdateTreatment-input"
-              multiple // Allow multiple file selection
-            />
+            {/* Add more input fields as needed */}
 
             <button onClick={updateTreatment} className="UpdateTreatment-button">Update Treatment</button>
           </div>
