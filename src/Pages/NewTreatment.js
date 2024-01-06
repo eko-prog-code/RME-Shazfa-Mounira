@@ -108,29 +108,29 @@ const NewTreatment = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      // Persiapkan data yang akan dikirim ke Firebase Realtime Database
-      const dataToSend = {
-        timestamp: new Date().getTime(),
-        Encounter_period_start: tanggal,  
-        identifier: id,  // Mengganti dari 'id' menjadi 'identifier'
-        complaint: complaint,
-        condition_physical_examination: condition_physical_examination,
-        Observation: Observation,
-        diagnosis: diagnosis,  // Mengganti dari 'diagnosis_medis' menjadi 'diagnosis'
-        Medication: Medication,
-        images: uploadedImages,
-      };
+  try {
+    // Persiapkan data yang akan dikirim ke Firebase Realtime Database
+    const dataToSend = {
+      timestamp: new Date().getTime(),
+      Encounter_period_start: `${tanggal} ${jamMenitDetik}`,  // Combine date and time
+      identifier: id,
+      complaint: complaint,
+      condition_physical_examination: condition_physical_examination,
+      Observation: Observation,
+      diagnosis: diagnosis,
+      Medication: Medication,
+      images: uploadedImages,
+    };
 
-      // Kirim data ke Firebase Realtime Database
-      await axios.post(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records.json`, dataToSend);
+    // Kirim data ke Firebase Realtime Database
+    await axios.post(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records.json`, dataToSend);
 
-      console.log('Data pengobatan berhasil disimpan');
-      window.location.href = `/emr/${id}`;
-    } catch (error) {
-      console.error('Terjadi kesalahan:', error);
-    }
-  };
+    console.log('Data pengobatan berhasil disimpan');
+    window.location.href = `/emr/${id}`;
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error);
+  }
+};
 
   return (
     <div className="unique-new-treatment-container">

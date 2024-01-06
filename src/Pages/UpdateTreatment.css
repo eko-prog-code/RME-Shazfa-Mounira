@@ -1,20 +1,33 @@
 
+/* Default styles for PC */
 .UpdateTreatment-container {
-    width: 620px;
-    padding: 20px;
-    border: 1px solid #007bff; /* Border color */
-    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3); /* Box shadow with blue color */
-    border-radius: 8px; /* Optional: Add border-radius for rounded corners */
-    background-color: #fff; /* Background color */
-    margin-top: 80px;
-    margin-bottom: 80px;
-    
-    /* Center the container horizontally */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  width: 620px;
+  padding: 20px;
+  border: 1px solid #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+  border-radius: 8px;
+  background-color: #fff;
+  margin-top: 80px;
+  margin-bottom: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Center the container horizontally */
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .UpdateTreatment-container {
+    width: 100%;
+    max-width: 400px; /* Adjust the max-width for mobile devices */
+    margin: 20px; /* Adjust margin for spacing on mobile */
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+    border-radius: 8px;
   }
+}
+
   
   .UpdateTreatment-link {
     text-decoration: none;
@@ -90,3 +103,10 @@
     margin-top: 10px;
   }
   
+  /* UpdateTreatment.css */
+
+.UpdateTreatment-preview-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}

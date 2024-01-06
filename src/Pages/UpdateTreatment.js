@@ -15,6 +15,7 @@ const UpdateTreatment = () => {
     Medication: '',
     diagnosis: '',
     images: [],
+    encounter_period_start_update: '',
   });
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const UpdateTreatment = () => {
       .get(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}.json`)
       .then((response) => {
         setTreatmentData(response.data);
+        const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
         setUpdatedTreatmentData({
           complaint: response.data.complaint || '',
           condition_physical_examination: response.data.condition_physical_examination || '',
@@ -31,6 +33,7 @@ const UpdateTreatment = () => {
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
           images: response.data.images || [],
+          encounter_period_start_update: timestamp, // Set encounter_period_start here
         });
       })
       .catch((error) => {
@@ -38,32 +41,42 @@ const UpdateTreatment = () => {
       });
   }, [id, treatmentId]);
 
-  const handleInputChange = (e) => {
-    setUpdatedTreatmentData({
-      ...updatedTreatmentData,
-      [e.target.name]: e.target.value,
-    });
-  };
 
-  const handleImageDrop = (acceptedFiles) => {
-    const updatedImages = acceptedFiles.map(file =>
-      URL.createObjectURL(file)
-    );
-  
-    const updatedImageArray = [...updatedTreatmentData.images];
-    if (updatedImageArray.length > 0) {
-      updatedImageArray[0] = updatedImages[0];
-    } else {
-      updatedImageArray.push(updatedImages[0]);
+  const handleImageDrop = async (acceptedFiles) => {
+    try {
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        const timestamp = new Date().getTime();
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Use URL Firebase Storage to upload the image
+        const storageUrl = `https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/images%2F${timestamp}_${file.name}?alt=media`;
+
+        await axios.post(storageUrl, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        // Build the image download URL after uploading
+        const imageUrl = `https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/images%2F${timestamp}_${file.name}?alt=media`;
+
+        // Update state with the image download URL
+        setUpdatedTreatmentData((prevData) => ({
+          ...prevData,
+          images: [...prevData.images, imageUrl],
+        }));
+      });
+
+      // Wait for all image upload promises to finish
+      await Promise.all(uploadPromises);
+
+      setUpdateSuccess(true);
+    } catch (error) {
+      console.error('Error uploading images:', error);
     }
-  
-    setUpdatedTreatmentData({
-      ...updatedTreatmentData,
-      images: updatedImageArray,
-    });
-
-    setUpdateSuccess(true);
   };
+
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
@@ -74,6 +87,7 @@ const UpdateTreatment = () => {
     const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
     const updatedDataWithTimestamp = {
       ...updatedTreatmentData,
+      identifier: id,
       timestamp: timestamp,
     };
 
@@ -91,6 +105,32 @@ const UpdateTreatment = () => {
       });
   };
 
+
+  const renderImagePreviews = () => {
+    return (
+      <div>
+        <h3>Image Previews</h3>
+        {updatedTreatmentData.images.map((imageUrl, index) => (
+          <img
+            key={index}
+            src={imageUrl}
+            alt={`Image ${index + 1}`}
+            className="UpdateTreatment-preview-image"
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const handleInputChange = (e) => {
+    setUpdatedTreatmentData({
+      ...updatedTreatmentData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+
+
   return (
     <div className="UpdateTreatment-container">
       <Link to={`/emr/${id}`} className="UpdateTreatment-link">&lt; Back to EMR</Link>
@@ -98,9 +138,21 @@ const UpdateTreatment = () => {
       {treatmentData && (
         <div>
           <p>Treatment ID: {treatmentId}</p>
-          <p>Tanggal dan Waktu: {treatmentData.timestamp}</p>
+          <p>TimeStamp: {treatmentData.timestamp}</p>
 
           <div className="UpdateTreatment-form">
+
+            <label htmlFor="encounter_period_start_update" className="UpdateTreatment-label">Encounter Period Start Update:</label>
+            <input
+              type="text"
+              id="encounter_period_start_update"
+              name="encounter_period_start_update"
+              value={updatedTreatmentData.encounter_period_start_update}
+              onChange={handleInputChange}
+              className="UpdateTreatment-input"
+            />
+
+
             <label htmlFor="complaint" className="UpdateTreatment-label">Keluhan:</label>
             <input
               type="text"
@@ -148,6 +200,8 @@ const UpdateTreatment = () => {
             {updateSuccess && (
               <p className="UpdateTreatment-success-message">Update Images berhasil!</p>
             )}
+
+            {updateSuccess && renderImagePreviews()}
 
             <label htmlFor="diagnosis" className="UpdateTreatment-label">Diagnosa Medis:</label>
             <input

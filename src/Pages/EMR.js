@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaTimes } from 'react-icons/fa'; // Impor ikon "X" dari react-icons/fa
-import { format } from 'date-fns';
+import { format, differenceInHours } from 'date-fns';
 import './EMR.css';
 
 const EMR = () => {
@@ -13,6 +13,11 @@ const EMR = () => {
     const [allergyIntolerance, setAllergyIntolerance] = useState('');
     const [healthHistory, setHealthHistory] = useState('');
     const [zoomedImage, setZoomedImage] = useState(null);
+    const isEditable = (timestamp) => {
+        const hoursDifference = differenceInHours(new Date(), new Date(timestamp));
+        return hoursDifference <= 24;
+    };
+
 
     useEffect(() => {
         // Mengambil data pasien
@@ -210,9 +215,16 @@ const EMR = () => {
                                     onClick={() => confirmDelete(treatment.id)}
                                 />
 
-                                <Link to={`/emr/${id}/update-treatment/${treatment.id}`}>
-                                    <button>Edit</button>
-                                </Link>
+                                {/* Display "Edit" button only if the treatment is editable */}
+                                {isEditable(treatment.timestamp) ? (
+                                    <Link to={`/emr/${id}/update-treatment/${treatment.id}`}>
+                                        <button>Edit</button>
+                                    </Link>
+                                ) : (
+                                    <button onClick={() => alert('Mohon maaf, fungsi edit tidak bisa dilakukan karena sudah 24 jam!')}>
+                                        Edit
+                                    </button>
+                                )}
 
                                 <p>Tanggal dan Waktu: {format(new Date(treatment.timestamp), 'dd MMMM yyyy HH:mm:ss')}</p>
                                 <p>Keluhan: {treatment.complaint}</p>
