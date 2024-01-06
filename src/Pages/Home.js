@@ -173,6 +173,16 @@ const Home = () => {
                 </Link>
             </div>
 
+            <div className="image-button-container-SatuSehat">
+                <Link to="/satusehat">
+                    <img
+                        src="https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/HomeButton%2FIntegrasi%20Satu%20Sehat.png?alt=media&token=50da787c-5b95-482b-a6ff-33ef99ab9215"
+                        alt="Satu Sehat Integrate"
+                        className="image-button-SatuSehat"
+                    />
+                </Link>
+            </div>
+
             {isFormVisible && (
                 <div className="modal-background" onClick={closeModal}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>

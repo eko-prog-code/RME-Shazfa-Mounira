@@ -261,6 +261,43 @@ ul {
     gap: 10px;
     /* Jarak antara tombol di perangkat mobile */
   }
+}
+
+
+  .image-button-container-SatuSehat {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  /* Media query untuk perangkat dengan lebar layar maksimum 600px (sesuaikan dengan kebutuhan Anda) */
+  @media screen and (max-width: 600px) {
+    .image-button-SatuSehat {
+      width: 100%; /* Mengubah lebar menjadi 100% dari lebar viewport */
+      height: 40vw; /* Mengatur tinggi menjadi 50% dari lebar viewport */
+    }
+  }
+  
+  .image-button-SatuSehat {
+    width: 1100px;
+    height: 300px;
+    cursor: pointer;
+  }
+  
+  .image-button {
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .image-button-container {
+      flex-direction: flex;
+      align-items: center;
+      gap: 10px;
+      /* Jarak antara tombol di perangkat mobile */
+    }
+  
 
   .image-button {
     width: 160px;

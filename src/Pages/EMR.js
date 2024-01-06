@@ -232,6 +232,7 @@ const EMR = () => {
                                 <p>Tanda-Tanda Vital: {treatment.Observation}</p>
                                 <p>Terapi Obat: {treatment.Medication}</p>
                                 <p>Diagnosa Medis: {treatment.diagnosis}</p>
+                                <p>DPJP (Participant): {treatment.participant}</p>
                                 {treatment.images && treatment.images.length > 0 && (
                                     <img
                                         src={treatment.images[0]} // Ganti dengan sumber gambar dari treatment

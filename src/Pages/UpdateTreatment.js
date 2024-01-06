@@ -14,6 +14,7 @@ const UpdateTreatment = () => {
     Observation: '',
     Medication: '',
     diagnosis: '',
+    participant: '',
     images: [],
     encounter_period_start_update: '',
   });
@@ -32,6 +33,7 @@ const UpdateTreatment = () => {
           Observation: response.data.Observation || '',
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
+          participant: response.data.participant || '',
           images: response.data.images || [],
           encounter_period_start_update: timestamp, // Set encounter_period_start here
         });
@@ -129,7 +131,12 @@ const UpdateTreatment = () => {
     });
   };
 
-
+  const [doctors, setDoctors] = useState([
+    'Dokter Libra',
+    'Dokter Chantika',
+    'Dr Rena',
+    // ... (tambahkan dokter lain jika diperlukan)
+  ]);
 
   return (
     <div className="UpdateTreatment-container">
@@ -212,6 +219,23 @@ const UpdateTreatment = () => {
               onChange={handleInputChange}
               className="UpdateTreatment-input"
             />
+
+            <label htmlFor="participant" className="UpdateTreatment-label">Dokter DPJP:</label>
+            <select
+              id="participant"
+              name="participant"
+              value={updatedTreatmentData.participant}
+              onChange={handleInputChange}
+              className="UpdateTreatment-input"
+            >
+              <option value="">Pilih Dokter</option>
+              {doctors.map((doctor, index) => (
+                <option key={index} value={doctor}>
+                  {doctor}
+                </option>
+              ))}
+            </select>
+
 
             <button onClick={updateTreatment} className="UpdateTreatment-button">Update Treatment</button>
 

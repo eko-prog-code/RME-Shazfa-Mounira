@@ -12,6 +12,7 @@ const NewTreatment = () => {
   const [Observation, setObservation] = useState('');
   const [diagnosis, setDiagnosis] = useState(''); // Mengganti dari 'medical_diagnosis' menjadi 'diagnosis'
   const [Medication, setMedication] = useState(''); // Mengganti dari 'Medication' menjadi 'Medication'
+  const [participant, setParticipant] = useState('');
   const [tanggal, setTanggal] = useState(format(new Date(), 'dd MMMM yyyy'));
   const [jamMenitDetik, setJamMenitDetik] = useState(format(new Date(), 'HH:mm:ss'));
   const [icdData, setIcdData] = useState([]);
@@ -82,7 +83,7 @@ const NewTreatment = () => {
   };
 
   const handleObservationChange = (e) => {
-    setObservation(e.target.value); 
+    setObservation(e.target.value);
   };
 
   const handleDiagnosisChange = (e) => {
@@ -100,6 +101,17 @@ const NewTreatment = () => {
     setFilteredIcdData([]);
   };
 
+  const [doctors, setDoctors] = useState([
+    'Dokter Libra',
+    'Dokter Chantika',
+    'Dr Rena',
+    // ... (tambahkan dokter lain jika diperlukan)
+  ]);
+
+  const handleParticipantChange = (e) => {
+    setParticipant(e.target.value);
+  };
+
   const filterIcdData = (filterValue) => {
     const filteredList = icdData.filter(
       (item) => item.code.toLowerCase().includes(filterValue.toLowerCase()) || item.name.toLowerCase().includes(filterValue.toLowerCase())
@@ -108,29 +120,30 @@ const NewTreatment = () => {
   };
 
   const handleSubmit = async () => {
-  try {
-    // Persiapkan data yang akan dikirim ke Firebase Realtime Database
-    const dataToSend = {
-      timestamp: new Date().getTime(),
-      Encounter_period_start: `${tanggal} ${jamMenitDetik}`,  // Combine date and time
-      identifier: id,
-      complaint: complaint,
-      condition_physical_examination: condition_physical_examination,
-      Observation: Observation,
-      diagnosis: diagnosis,
-      Medication: Medication,
-      images: uploadedImages,
-    };
+    try {
+      // Persiapkan data yang akan dikirim ke Firebase Realtime Database
+      const dataToSend = {
+        timestamp: new Date().getTime(),
+        Encounter_period_start: `${tanggal} ${jamMenitDetik}`,  // Combine date and time
+        identifier: id,
+        complaint: complaint,
+        condition_physical_examination: condition_physical_examination,
+        Observation: Observation,
+        diagnosis: diagnosis,
+        Medication: Medication,
+        participant: participant,
+        images: uploadedImages,
+      };
 
-    // Kirim data ke Firebase Realtime Database
-    await axios.post(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records.json`, dataToSend);
+      // Kirim data ke Firebase Realtime Database
+      await axios.post(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records.json`, dataToSend);
 
-    console.log('Data pengobatan berhasil disimpan');
-    window.location.href = `/emr/${id}`;
-  } catch (error) {
-    console.error('Terjadi kesalahan:', error);
-  }
-};
+      console.log('Data pengobatan berhasil disimpan');
+      window.location.href = `/emr/${id}`;
+    } catch (error) {
+      console.error('Terjadi kesalahan:', error);
+    }
+  };
 
   return (
     <div className="unique-new-treatment-container">
@@ -178,11 +191,20 @@ const NewTreatment = () => {
           )}
           <h3>Terapi Obat</h3>
           <input type="text" value={Medication} onChange={handleMedicationChange} className="unique-input-field" />
+          <h3>Participant</h3>
+          <select value={participant} onChange={handleParticipantChange} className="unique-input-field">
+            <option value="">Pilih Dokter</option>
+            {doctors.map((doctor, index) => (
+              <option key={index} value={doctor}>
+                {doctor}
+              </option>
+            ))}
+          </select>
         </div>
         <button onClick={handleSubmit} className="unique-submit-button rounded-button">
           Submit
         </button>
-         <Link to={`/emr/${id}`} className="unique-back-link">
+        <Link to={`/emr/${id}`} className="unique-back-link">
           Kembali ke EMR
         </Link>
       </div>
