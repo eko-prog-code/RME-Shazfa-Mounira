@@ -16,7 +16,7 @@ const UpdateTreatment = () => {
     diagnosis: '',
     participant: '',
     images: [],
-    encounter_period_start_update: '',
+    Encounter_period_start: '', // Ganti properti
   });
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const UpdateTreatment = () => {
           diagnosis: response.data.diagnosis || '',
           participant: response.data.participant || '',
           images: response.data.images || [],
-          encounter_period_start_update: timestamp, // Set encounter_period_start here
+          Encounter_period_start: timestamp, // Set Encounter_period_start here
         });
       })
       .catch((error) => {
@@ -91,6 +91,7 @@ const UpdateTreatment = () => {
       ...updatedTreatmentData,
       identifier: id,
       timestamp: timestamp,
+      Encounter_period_start: updatedTreatmentData.Encounter_period_start, // Ganti properti
     };
 
     axios
@@ -149,16 +150,15 @@ const UpdateTreatment = () => {
 
           <div className="UpdateTreatment-form">
 
-            <label htmlFor="encounter_period_start_update" className="UpdateTreatment-label">Encounter Period Start Update:</label>
+            <label htmlFor="Encounter_period_start" className="UpdateTreatment-label">Encounter Period Start:</label>
             <input
               type="text"
-              id="encounter_period_start_update"
-              name="encounter_period_start_update"
-              value={updatedTreatmentData.encounter_period_start_update}
+              id="Encounter_period_start"
+              name="Encounter_period_start"
+              value={updatedTreatmentData.Encounter_period_start}
               onChange={handleInputChange}
               className="UpdateTreatment-input"
             />
-
 
             <label htmlFor="complaint" className="UpdateTreatment-label">Keluhan:</label>
             <input
@@ -235,7 +235,6 @@ const UpdateTreatment = () => {
                 </option>
               ))}
             </select>
-
 
             <button onClick={updateTreatment} className="UpdateTreatment-button">Update Treatment</button>
 
