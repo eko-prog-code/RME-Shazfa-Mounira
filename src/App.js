@@ -11,6 +11,7 @@ import DermaDrug from './Pages/DermaDrug'; // Import DermaDrug component
 import ServiceSetting from './Pages/ServiceSetting';
 import ListBelanjaObat from './Pages/ListBelanjaObat';
 import UpdateTreatment from './Pages/UpdateTreatment';
+import Encounter from './Pages/Encounter'
 import SatuSehat from './Pages/SatuSehat';
 
 
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/derma-drug" element={<DermaDrug />} /> {/* New route for DermaDrug */}
           <Route path="/service-setting" element={<ServiceSetting />} />
           <Route path="/list-belanja-obat" element={<ListBelanjaObat />} />
+          <Route path="/encounter" element={<Encounter />} />
         </Routes>
       </div>
     </Router>
