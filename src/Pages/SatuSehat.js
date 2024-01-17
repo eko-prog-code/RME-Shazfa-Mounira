@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import Button from "../components/ui/Button";
-import Modal from "../components/Modal";
+
+import { Link } from "react-router-dom";
 import "react-datepicker/dist/react-datepicker.css";
 import "./SatuSehat.css"; // Import file CSS
+import { getToken } from "../services/auth";
 
 const SatuSehat = () => {
   const [patients, setPatients] = useState([]);
@@ -51,61 +53,6 @@ const SatuSehat = () => {
     setFilteredPatients(filteredData);
   };
 
-  const [accessToken, setAccessToken] = useState(null);
-  const [modalId, setModalId] = useState(null);
-
-  const handleOpenModal = (id) => {
-    setModalId(id);
-  };
-
-  const handleCloseModal = () => {
-    setModalId(null);
-  };
-
-  const fetchToken = async () => {
-    try {
-      // Set your client_id and client_secret
-      const clientId = "TwLnADX6F27jCpvfGIodNeNsPOAxWz8KypXhkTkyhQXGYrbJ";
-      const clientSecret =
-        "LLYCw4UHEQ8skMPKAehK1N0ojKrb0GI84RjwdclEXZ0zbICPdxT7BZW65BUQEP6W";
-
-      // Create a form data object
-      const formData = new URLSearchParams();
-
-      formData.append("client_id", clientId);
-      formData.append("client_secret", clientSecret);
-
-      // Make the POST request
-      const response = await axios.post(
-        "https://api-satusehat-dev.dto.kemkes.go.id/oauth2/v1/accesstoken?grant_type=client_credentials",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
-
-      // Handle the response
-      setAccessToken(response.data.access_token);
-
-      if (filteredPatients.length > 0) {
-        // Open the modal with the id of the first patient in the filtered list
-        handleOpenModal(filteredPatients[0].id);
-      }
-    } catch (error) {
-      // Handle errors
-      console.error("Error fetching access token:", error);
-    }
-
-    if (filteredPatients.length > 0) {
-      // Open the modal with the id of the first patient in the filtered list
-      handleOpenModal(filteredPatients[0].id);
-    }
-  };
-
-  console.log(accessToken, "token");
-  console.log(modalId, "modal id");
   return (
     <div className="container">
       <h1>Satu Sehat</h1>
@@ -157,51 +104,45 @@ const SatuSehat = () => {
               <p>Identifier: {patient.identifier}</p>
               <p>Number of Medical Records: {patient.number_medical_records}</p>
               {Object.values(patient.medical_records || {}).map((record) => (
-                <div key={record.identifier} className="medical-record">
-                  <h4>Generate ID: {record.identifier}</h4>
-                  <p>Complaint: {record.complaint}</p>
-                  <p>Observation: {record.Observation}</p>
-                  <p>
-                    Condition Physical Examination:{" "}
-                    {record.condition_physical_examination}
-                  </p>
-                  <p>Diagnosis: {record.diagnosis}</p>
-                  <p>Medication: {record.Medication}</p>
-                  <p>Participant: {record.participant}</p>
-                  <p>Encounter Period: {record.Encounter_period_start}</p>
-                </div>
-              ))}
-              {modalId !== null && (
                 <>
-                  <Modal
-                    handleCloseModal={handleCloseModal}
-                    patientId={
-                      Object.values(patient.medical_records || {})[0]
-                        ?.identifier
-                    }
-                    patientName={patient.name}
-                    token={accessToken}
-                  />
+                  <div key={record.identifier} className="medical-record">
+                    <h4>Generate ID: {record.identifier}</h4>
+                    <p>Complaint: {record.complaint}</p>
+                    <p>Observation: {record.Observation}</p>
+                    <p>
+                      Condition Physical Examination:{" "}
+                      {record.condition_physical_examination}
+                    </p>
+                    <p>Diagnosis: {record.diagnosis}</p>
+                    <p>Medication: {record.Medication}</p>
+                    <p>Participant: {record.participant}</p>
+                    <p>Encounter Period: {record.Encounter_period_start}</p>
+                  </div>
+                  <Link
+                    to={"/encounter"}
+                    state={{
+                      participant: record.participant,
+                      patient: patient.name,
+                      periodeStart: record.Encounter_period_start,
+                    }}
+                  >
+                    <Button
+                      onClick={getToken}
+                      className="inline-flex ml-2 mt-2  text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
+                    >
+                      Encounter
+                    </Button>
+                  </Link>
+
+                  <Button className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm">
+                    Observation
+                  </Button>
+
+                  <Button className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm">
+                    Diagnosis
+                  </Button>
                 </>
-              )}
-              <Button
-                onClick={handleOpenModal}
-                className="inline-flex ml-2 mt-2  text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
-              >
-                Encounter
-              </Button>
-              <Button
-                onClick={fetchToken}
-                className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
-              >
-                Observation
-              </Button>
-              <Button
-                onClick={fetchToken}
-                className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
-              >
-                Diagnosis
-              </Button>
+              ))}
             </div>
           ))
         ) : (

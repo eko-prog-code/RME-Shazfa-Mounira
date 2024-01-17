@@ -48,6 +48,8 @@
   },
   "devDependencies": {
     "eslint": "^8.53.0",
+    "http-proxy-middleware": "^2.0.6",
     "tailwindcss": "^3.3.5"
-  }
+  },
+  "proxy":"https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1"
 }
