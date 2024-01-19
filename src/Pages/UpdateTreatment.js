@@ -148,6 +148,7 @@ const UpdateTreatment = () => {
   const [doctors, setDoctors] = useState([
     'dr. Yohanes hendra budi santoso',
     'dr. yesi novia Ambarani',
+    'Practitioner 1',
     // ... (tambahkan dokter lain jika diperlukan)
   ]);
 
