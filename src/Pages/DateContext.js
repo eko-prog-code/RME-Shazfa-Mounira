@@ -15,7 +15,7 @@ export const DateProvider = ({ children }) => {
         timeZoneName: 'short',
       };
 
-      return new Intl.DateTimeFormat('en-US', options).format(date);
+      return new Intl.DateTimeFormat('id-ID', options).format(date);
     };
   }, []);
 
