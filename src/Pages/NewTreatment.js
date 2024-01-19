@@ -108,6 +108,7 @@ const NewTreatment = () => {
     const doctorNIKData = {
       'dr. Yohanes hendra budi santoso': '3215131301790004',
       'dr. yesi novia Ambarani': '3205155812920006',
+      'Practitioner 1': '7209061211900001',
       // ... (tambahkan NIK dokter lain jika diperlukan)
     };
   
