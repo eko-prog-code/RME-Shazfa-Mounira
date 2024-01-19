@@ -19,6 +19,7 @@ const NewTreatment = () => {
   const [filteredIcdData, setFilteredIcdData] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [uploadedImages, setUploadedImages] = useState([]);
+  const [doctorNIK, setDoctorNIK] = useState('');
 
   // Fungsi untuk menangani penurunan gambar
   const onDrop = async (acceptedFiles) => {
@@ -101,10 +102,23 @@ const NewTreatment = () => {
     setFilteredIcdData([]);
   };
 
+  useEffect(() => {
+    // Fetch NIK data from the API or use a predefined list
+    // For testing purposes, I'll use a predefined list
+    const doctorNIKData = {
+      'dr. Yohanes hendra budi santoso': '3215131301790004',
+      'dr. yesi novia Ambarani': '3205155812920006',
+      // ... (tambahkan NIK dokter lain jika diperlukan)
+    };
+  
+    // Set NIK dokter berdasarkan nama dokter yang dipilih
+    setDoctorNIK(doctorNIKData[participant]);
+  }, [participant]);
+  
+
   const [doctors, setDoctors] = useState([
-    'Dokter Libra',
-    'Dokter Chantika',
-    'Dr Rena',
+    'dr. Yohanes hendra budi santoso',
+    'dr. yesi novia Ambarani',
     // ... (tambahkan dokter lain jika diperlukan)
   ]);
 
@@ -124,7 +138,7 @@ const NewTreatment = () => {
       // Persiapkan data yang akan dikirim ke Firebase Realtime Database
       const dataToSend = {
         timestamp: new Date().getTime(),
-        Encounter_period_start: `${tanggal} ${jamMenitDetik}`,  // Combine date and time
+        Encounter_period_start: new Date(`${tanggal} ${jamMenitDetik}`),
         identifier: id,
         complaint: complaint,
         condition_physical_examination: condition_physical_examination,
@@ -132,6 +146,7 @@ const NewTreatment = () => {
         diagnosis: diagnosis,
         Medication: Medication,
         participant: participant,
+        doctorNIK: doctorNIK,
         images: uploadedImages,
       };
 

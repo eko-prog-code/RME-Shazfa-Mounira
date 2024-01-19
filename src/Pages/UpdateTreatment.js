@@ -20,6 +20,7 @@ const UpdateTreatment = () => {
   });
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
+  const [doctorNIK, setDoctorNIK] = useState('');
 
   useEffect(() => {
     axios
@@ -42,6 +43,16 @@ const UpdateTreatment = () => {
         console.error('Error fetching treatment data:', error);
       });
   }, [id, treatmentId]);
+
+  useEffect(() => {
+    const doctorNIKData = {
+      'dr. Yohanes hendra budi santoso': '3215131301790004',
+      'dr. yesi novia Ambarani': '3205155812920006',
+      // ... (add NIK for other doctors if needed)
+    };
+
+    setDoctorNIK(doctorNIKData[updatedTreatmentData.participant]);
+  }, [updatedTreatmentData.participant]);
 
 
   const handleImageDrop = async (acceptedFiles) => {
@@ -91,6 +102,7 @@ const UpdateTreatment = () => {
       ...updatedTreatmentData,
       identifier: id,
       timestamp: timestamp,
+      doctorNIK: doctorNIK,
       Encounter_period_start: updatedTreatmentData.Encounter_period_start, // Ganti properti
     };
 
@@ -133,9 +145,8 @@ const UpdateTreatment = () => {
   };
 
   const [doctors, setDoctors] = useState([
-    'Dokter Libra',
-    'Dokter Chantika',
-    'Dr Rena',
+    'dr. Yohanes hendra budi santoso',
+    'dr. yesi novia Ambarani',
     // ... (tambahkan dokter lain jika diperlukan)
   ]);
 

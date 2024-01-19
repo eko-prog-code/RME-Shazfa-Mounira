@@ -141,3 +141,18 @@ body {
   max-width: 100%;
   max-height: 100%;
 }
+
+.satu-sehat-logo {
+  max-width: 100%; /* Logo akan responsif sesuai lebar layar */
+  height: auto; /* Menjaga aspek rasio logo */
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f5f5f5; /* Ganti dengan warna background yang diinginkan */
+}
