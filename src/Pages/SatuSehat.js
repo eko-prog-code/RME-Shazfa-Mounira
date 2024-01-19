@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
+import { format } from 'date-fns';
 import Button from "../components/ui/Button";
 
 import { Link } from "react-router-dom";
@@ -128,7 +129,7 @@ const SatuSehat = () => {
                     <p>Diagnosis: {record.diagnosis}</p>
                     <p>Medication: {record.Medication}</p>
                     <p>Participant: {record.participant}</p>
-                    <p>Encounter Period: {record.Encounter_period_start}</p>
+                    <p>Encounter Period: {format(new Date(record.Encounter_period_start), 'yyyy-MM-dd HH:mm:ss')}</p>
                   </div>
                   <Link
                     to={"/encounter"}

@@ -9,6 +9,9 @@ const EncounterForm = ({ datas }) => {
     // Function to format the date
     const formatDate = (dateString) => {
       const date = new Date(dateString);
+      // Mengonversi waktu dari zona waktu setempat ke UTC
+      const utcHours = date.getHours() - 7; // Mengurangkan 7 jam untuk WIB (UTC+00 - 7)
+      date.setHours(utcHours);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
@@ -33,7 +36,7 @@ const EncounterForm = ({ datas }) => {
         "Organization/dfd92855-8cec-4a10-be94-8edd8a097344",
       locationReference: "Location/b017aa54-f1df-4ec2-9d84-8823815d7228",
       locationDisplay:
-        "Ruang 1A, Poliklinik Bedah Rawat Jalan Terpadu, Lantai 2, Gedung G",
+        "Ruang Pemeriksaan Poli Umum, Klinik Shazfa Mounira",
       // ... (add other form fields)
     };
     return initialFormData;
