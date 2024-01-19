@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
+import './Modal.css'
 
 const EncounterForm = ({ datas }) => {
+  const [ihsId, setIhsId] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
   const [formData, setFormData] = useState(() => {
     // Function to format the date
@@ -30,6 +34,7 @@ const EncounterForm = ({ datas }) => {
       subjectDisplay: datas.patient,
       participantReference: "Practitioner/N10000001",
       participantDisplay: datas.participant,
+      doctorNik: datas.doctorNIK,
       periodStart: formatDate(datas.periodeStart),
       statusHistoryStart: formatDate(datas.periodeStart),
       serviceProviderReference:
@@ -168,6 +173,57 @@ const EncounterForm = ({ datas }) => {
       .finally(() => setLoading(false));
   };
 
+  const handleGetIHS = async () => {
+    // Pastikan formData.doctorNik memiliki nilai yang valid
+    if (!formData.doctorNik) {
+      console.error('Error: doctorNik is not defined in formData');
+      return;
+    }
+  
+    try {
+      // Ambil access token sebelum membuat permintaan API
+      const tokenResponse = await axios.get("http://localhost:5000/getIHS?identifier=" + formData.doctorNik);
+      const accessToken = tokenResponse.data.accessToken;
+  
+      // Sertakan access token dalam header permintaan
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`, // Ganti YOUR_ACCESS_TOKEN dengan token aktual
+      };
+  
+      // Bangun URL lengkap termasuk URL dasar dan identifier
+      const apiUrl = `http://localhost:5000/getIHS?identifier=${formData.doctorNik}`;
+  
+      const response = await axios.get(apiUrl, { headers });
+      const data = response.data;
+  
+      if (data.success) {
+        setIhsId(data.ihsId);
+        setShowModal(true);
+      } else {
+        console.error('Error getting IHS Participant:', data.error);
+      }
+    } catch (error) {
+      console.error('Error getting IHS Participant:', error);
+    }
+  };
+  
+  
+  const handleCopyIHS = () => {
+    try {
+      navigator.clipboard.writeText(ihsId);
+      console.log('IHS ID copied to clipboard:', ihsId);
+    } catch (error) {
+      console.error('Error copying IHS ID to clipboard:', error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    // Fungsi ini menutup modal
+    setIsModalOpen(false);
+  };
+  
+
   return (
     <>
       <section className=" py-1 bg-blueGray-50">
@@ -191,7 +247,7 @@ const EncounterForm = ({ datas }) => {
                 <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
                   Patient Information
                 </h6>
-
+                <h1>{formData.doctorNik}</h1>
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-12/12 px-4">
                     <div className="relative w-full mb-3">
@@ -385,6 +441,33 @@ const EncounterForm = ({ datas }) => {
                   {loading ? "Loading..." : "Kirim Data"}
                 </Button>
               </form>
+              <button
+              className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
+              onClick={handleGetIHS}
+            >
+              getIHS-Participant
+            </button>
+      
+            <button
+              className="inline-flex ml-2 mt-2 text-white bg-[#4CAF50] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-4CAF50 text-sm"
+              onClick={handleCopyIHS}
+            >
+              Copy IHS ID
+            </button>
+      
+            {/* Modal */}
+            {isModalOpen && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <span className="close" onClick={handleCloseModal}>
+                    &times;
+                  </span>
+                  <div className="modal-content">
+                    <p>IHS ID has been copied successfully.</p>
+                  </div>
+                </div>
+              </div>
+            )}
             </div>
           </div>
         </div>

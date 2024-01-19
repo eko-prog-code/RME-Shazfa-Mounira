@@ -2,6 +2,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const axios = require('axios'); // Import modul axios
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = 5000;
@@ -44,6 +45,50 @@ app.post('/forward-request', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+const getIHSParticipant = async (identifier, accessToken) => {
+  try {
+    const firebaseTokenUrl = "https://rme-shazfa-mounira-default-rtdb.firebaseio.com/token.json";
+    const response = await axios.get(firebaseTokenUrl);
+    const accessToken = response.data.token; 
+
+    console.log('Access Token:', accessToken);
+    const apiUrl = `https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Practitioner?identifier=https://fhir.kemkes.go.id/id/nik|${identifier}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
+
+    const participantResponse = await axios.get(apiUrl, { headers });
+
+    if (participantResponse.data && participantResponse.data.entry && participantResponse.data.entry.length > 0) {
+      const ihsId = participantResponse.data.entry[0].resource.id;
+      return ihsId;
+    } else {
+      throw new Error('IHS Participant (Practitioner) not found');
+    }
+  } catch (error) {
+    console.error('Error fetching IHS Participant (Practitioner):', error);
+    throw error;
+  }
+};
+
+
+app.get('/getIHS', async (req, res) => {
+  const { identifier, accessToken } = req.query;
+
+  try {
+    const ihsId = await getIHSParticipant(identifier, accessToken);
+    res.json({ success: true, ihsId });
+  } catch (error) {
+    console.error('Error in /getIHS endpoint:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
