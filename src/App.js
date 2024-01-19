@@ -11,8 +11,8 @@ import DermaDrug from './Pages/DermaDrug'; // Import DermaDrug component
 import ServiceSetting from './Pages/ServiceSetting';
 import ListBelanjaObat from './Pages/ListBelanjaObat';
 import UpdateTreatment from './Pages/UpdateTreatment';
-import Encounter from './Pages/Encounter'
 import SatuSehat from './Pages/SatuSehat';
+import Encounter from './Pages/Encounter'
 
 
 const App = () => {
@@ -27,12 +27,12 @@ const App = () => {
           <Route path="/emr/:id/update-treatment/:treatmentId" element={<UpdateTreatment />} />
           <Route path="/internis" element={<InternisDrug />} />
           <Route path="/satusehat" element={<SatuSehat />} />
+          <Route path="/encounter" element={<Encounter />} />
           <Route path="/pediatric" element={<PediatricDrug />} />
           <Route path="/tooth-drug" element={<ToothDrug />} /> {/* New route for ToothDrug */}
           <Route path="/derma-drug" element={<DermaDrug />} /> {/* New route for DermaDrug */}
           <Route path="/service-setting" element={<ServiceSetting />} />
           <Route path="/list-belanja-obat" element={<ListBelanjaObat />} />
-          <Route path="/encounter" element={<Encounter />} />
         </Routes>
       </div>
     </Router>

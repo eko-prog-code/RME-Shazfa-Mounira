@@ -1,5 +1,7 @@
+// UserAccess.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getToken } from './auth';
 import './UserAccess.css';
 
 const UserAccess = () => {
@@ -12,34 +14,43 @@ const UserAccess = () => {
   const waNumber = '+62895600394345';
 
   const handleChatButtonClick = () => {
-    // Membuka obrolan WhatsApp di aplikasi atau browser
     window.open(`https://wa.me/${waNumber}`, '_blank');
   };
 
+  const correctPasswordFromSourceCode = '24';
 
-  const correctPasswordFromSourceCode = '24'; // Ganti dengan password yang diinginkan
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Periksa apakah password yang dimasukkan sesuai dengan yang ditetapkan di source code
-    const isPasswordCorrect = password === correctPasswordFromSourceCode;
-    setPasswordCorrect(isPasswordCorrect);
-    setLoading(false);
+    try {
+      // Ambil token dari localStorage atau ambil baru jika belum ada
+      const accessToken = localStorage.getItem('accessToken') || await getToken();
 
-    if (isPasswordCorrect) {
-      // Password benar, arahkan pengguna ke halaman Home
-      navigate('/home'); // Ganti dengan path halaman yang diinginkan
-    } else {
-      // Password salah, set pesan kesalahan
-      setError('Password Salah. Silakan coba lagi.');
+      // Periksa apakah password yang dimasukkan sesuai dengan yang ditetapkan di source code
+      const isPasswordCorrect = password === correctPasswordFromSourceCode;
+      setPasswordCorrect(isPasswordCorrect);
+      setLoading(false);
+
+      if (isPasswordCorrect) {
+        // Redirect ke halaman Home
+        navigate('/home');
+      } else {
+        // Password salah, set pesan kesalahan
+        setError('Password Salah. Silakan coba lagi.');
+      }
+    } catch (error) {
+      // Tangani kesalahan saat mengambil token
+      console.error('Error:', error);
+      setError('Terjadi kesalahan. Silakan coba lagi.');
+      setLoading(false);
     }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
 
   return (
     <div className="user-access-container">
@@ -69,7 +80,7 @@ const UserAccess = () => {
           {error && <p className="error-message">{error}</p>}
         </form>
       )}
-     <p className="hidden-text">
+      <p className="hidden-text">
         Password: 24: {correctPasswordFromSourceCode}
       </p>
       <p>

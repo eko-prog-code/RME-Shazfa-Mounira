@@ -130,3 +130,14 @@ body {
     color: #000;
   }
   
+  .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Sesuaikan tinggi header sesuai kebutuhan */
+}
+
+.header-image {
+  max-width: 100%;
+  max-height: 100%;
+}

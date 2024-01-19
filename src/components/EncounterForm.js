@@ -86,6 +86,7 @@ const EncounterForm = ({ datas }) => {
       .catch((err) => console.log(err));
   };
   const saveData = async () => {
+    const postEncounterEndpoint = 'http://localhost:5000/forward-request'; // Update with your server endpoint
     const data = {
       resourceType: "Encounter",
       status: "arrived",
@@ -150,7 +151,7 @@ const EncounterForm = ({ datas }) => {
 
     setLoading(true);
     axios
-      .post("/Encounter", data, {
+      .post(postEncounterEndpoint, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
