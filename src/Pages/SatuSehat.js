@@ -137,6 +137,7 @@ const SatuSehat = () => {
                     state={{
                       participant: record.participant,
                       patient: patient.name,
+                      patientNIK: patient.identifier,
                       periodeStart: record.Encounter_period_start,
                       doctorNIK: record.doctorNIK,
                     }}

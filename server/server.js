@@ -87,7 +87,92 @@ app.get('/getIHS', async (req, res) => {
   }
 });
 
+const getIHSPatient = async (identifier, accessToken) => {
+  try {
+    const firebaseTokenUrl = "https://rme-shazfa-mounira-default-rtdb.firebaseio.com/token.json";
+    const response = await axios.get(firebaseTokenUrl);
+    const accessToken = response.data.token; 
 
+    console.log('Access Token:', accessToken);
+    const apiUrl = `https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Patient?identifier=https://fhir.kemkes.go.id/id/nik|${identifier}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
+
+    const patientResponse = await axios.get(apiUrl, { headers });
+
+    if (patientResponse.data && patientResponse.data.entry && patientResponse.data.entry.length > 0) {
+      const ihsIdpatient = patientResponse.data.entry[0].resource.id;
+      return ihsIdpatient;
+    } else {
+      throw new Error('IHS Patient not found');
+    }
+  } catch (error) {
+    console.error('Error fetching IHS Patient:', error);
+    throw error;
+  }
+};
+
+
+app.get('/getIHSpatient', async (req, res) => {
+  const { identifier, accessToken } = req.query;
+
+  try {
+    const ihsIdpatient = await getIHSPatient(identifier, accessToken);
+    res.json({ success: true, ihsIdpatient });
+  } catch (error) {
+    console.error('Error in /getIHSpatient endpoint:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+const getIDLocation = async (lokasi, accessToken) => {
+  try {
+    // Melakukan permintaan ke API eksternal
+    const apiUrl = `https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization=${lokasi}`;
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
+
+    const locationResponse = await axios.get(apiUrl, { headers });
+
+    console.log('locationResponse.data:', locationResponse.data);
+    if (locationResponse.data && locationResponse.data.entry && locationResponse.data.entry.length > 0) {
+      const IDlocation = locationResponse.data.entry[0].resource.id;
+      return IDlocation;
+    } else {
+      throw new Error('IDlocation not found');
+    }
+  } catch (error) {
+    console.error('Error fetching IDlocation:', error);
+    throw error;
+  }
+};
+
+app.get('/getIDlocation', async (req, res) => {
+  try {
+    // Mendapatkan lokasi dari query parameter
+    const lokasi = req.query.organization;
+    console.log('lokasi:', lokasi);
+
+    // Mendapatkan access token dari Firebase
+    const firebaseTokenUrl = "https://rme-shazfa-mounira-default-rtdb.firebaseio.com/token.json";
+    const response = await axios.get(firebaseTokenUrl);
+    const accessToken = response.data.token;
+
+    // Mendapatkan IDlocation dengan menggunakan fungsi getIDLocation
+    const IDlocation = await getIDLocation(lokasi, accessToken);
+
+    // Jika sukses, kirim IDlocation sebagai respons
+    res.json({ success: true, IDlocation: IDlocation });
+  } catch (error) {
+    // Jika terjadi kesalahan, kirim pesan error sebagai respons
+    console.error('Error in getIDlocation:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
 
 
 app.listen(port, () => {

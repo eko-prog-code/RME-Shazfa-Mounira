@@ -6,8 +6,8 @@ import './Modal.css'
 
 const EncounterForm = ({ datas }) => {
   const [ihsId, setIhsId] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ihsIdpatient, setIhsIdpatient] = useState('');  
+  const [IDlocation, setIDlocation] = useState('');
   const [accessToken, setAccessToken] = useState(null);
   const [formData, setFormData] = useState(() => {
     // Function to format the date
@@ -30,16 +30,17 @@ const EncounterForm = ({ datas }) => {
       identifierSystem:
         "http://sys-ids.kemkes.go.id/encounter/dfd92855-8cec-4a10-be94-8edd8a097344",
       identifierValue: "",
-      subjectReference: "Patient/100000030005",
+      subjectReference: "",
       subjectDisplay: datas.patient,
-      participantReference: "Practitioner/N10000001",
+      participantReference: "", // Assign ihsId here,
       participantDisplay: datas.participant,
+      patientNik: datas.patientNIK,
       doctorNik: datas.doctorNIK,
       periodStart: formatDate(datas.periodeStart),
       statusHistoryStart: formatDate(datas.periodeStart),
       serviceProviderReference:
         "Organization/dfd92855-8cec-4a10-be94-8edd8a097344",
-      locationReference: "Location/b017aa54-f1df-4ec2-9d84-8823815d7228",
+      locationReference: "",
       locationDisplay:
         "Ruang Pemeriksaan Poli Umum, Klinik Shazfa Mounira",
       // ... (add other form fields)
@@ -48,8 +49,19 @@ const EncounterForm = ({ datas }) => {
   });
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    handleGetIHS(); // Panggil fungsi untuk mendapatkan ihsId saat komponen dimuat
+    handleGetIHSpatient(); 
     fetchTokenFromFirebase();
+    handleGetIDlocation();
   }, []);
+
+  useEffect(() => {
+    // Update the identifierValue when ihsIdpatient changes
+    setFormData((prevData) => ({
+      ...prevData,
+      identifierValue: ihsIdpatient,
+    }));
+  }, [ihsIdpatient]);
 
   const fetchTokenFromFirebase = async () => {
     try {
@@ -179,27 +191,31 @@ const EncounterForm = ({ datas }) => {
       console.error('Error: doctorNik is not defined in formData');
       return;
     }
-  
+
     try {
       // Ambil access token sebelum membuat permintaan API
       const tokenResponse = await axios.get("http://localhost:5000/getIHS?identifier=" + formData.doctorNik);
       const accessToken = tokenResponse.data.accessToken;
-  
+
       // Sertakan access token dalam header permintaan
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`, // Ganti YOUR_ACCESS_TOKEN dengan token aktual
       };
-  
+
       // Bangun URL lengkap termasuk URL dasar dan identifier
       const apiUrl = `http://localhost:5000/getIHS?identifier=${formData.doctorNik}`;
-  
+
       const response = await axios.get(apiUrl, { headers });
       const data = response.data;
-  
+
       if (data.success) {
         setIhsId(data.ihsId);
-        setShowModal(true);
+        const formattedParticipantReference = `Practitioner/${data.ihsId}`;
+        setFormData((prevData) => ({
+          ...prevData,
+          participantReference: formattedParticipantReference,
+        }));
       } else {
         console.error('Error getting IHS Participant:', data.error);
       }
@@ -207,22 +223,93 @@ const EncounterForm = ({ datas }) => {
       console.error('Error getting IHS Participant:', error);
     }
   };
-  
-  
-  const handleCopyIHS = () => {
-    try {
-      navigator.clipboard.writeText(ihsId);
-      console.log('IHS ID copied to clipboard:', ihsId);
-    } catch (error) {
-      console.error('Error copying IHS ID to clipboard:', error);
+
+  const handleGetIHSpatient = async () => {
+    // Make sure formData.patientNik has a valid value
+    if (!formData.patientNik) {
+        console.error('Error: patientNik is not defined in formData');
+        return;
     }
+
+    try {
+        // Get the access token before making the API request
+        const tokenResponse = await axios.get("http://localhost:5000/getIHSpatient?identifier=" + formData.patientNik);
+        const accessToken = tokenResponse.data.accessToken;
+
+        // Include the access token in the request header
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        };
+
+        // Build the complete URL including the base URL and identifier
+        const apiUrl = `http://localhost:5000/getIHSpatient?identifier=${formData.patientNik}`;
+
+        const response = await axios.get(apiUrl, { headers });
+        const data = response.data;
+
+        if (data.success) {
+            setIhsIdpatient(data.ihsIdpatient);
+            const formattedsubjectReference = `Patient/${data.ihsIdpatient}`;
+            setFormData((prevData) => ({
+                ...prevData,
+                subjectReference: formattedsubjectReference,
+            }));
+        } else {
+            console.error('Error getting IHS Patient:', data.error);
+        }
+    } catch (error) {
+        console.error('Error getting IHS Patient:', error);
+    }
+};
+
+const handleGetIDlocation = async () => {
+  const formData = {
+    lokasi: 10000004,
+    // ... (other form data if needed)
   };
 
-  const handleCloseModal = () => {
-    // Fungsi ini menutup modal
-    setIsModalOpen(false);
-  };
-  
+  try {
+    // Get the access token before making the API request
+    const tokenResponse = await axios.get("http://localhost:5000/getIDlocation", {
+      params: {
+        organization: formData.lokasi
+      }
+    });
+
+    const accessToken = tokenResponse.data.accessToken;
+
+    // Include the access token in the request header
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
+
+    // Build the complete URL including the base URL and organization parameter
+    const apiUrl = `https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization=${formData.lokasi}`;
+
+    const response = await axios.get(apiUrl, { headers });
+    const data = response.data;
+
+    if (data.success) {
+      // Assuming data.IDlocation is present in the API response
+      setIDlocation(data.IDlocation);
+      
+      const formattedlocationReference = `Location/${data.IDlocation}`;
+      setFormData((prevData) => ({
+        ...prevData,
+        locationReference: formattedlocationReference,
+      }));
+    } else {
+      console.error('Error getting IDlocation:', data.error);
+    }
+  } catch (error) {
+    console.error('Error getting IDlocation:', error);
+  }
+};
+
+
+
 
   return (
     <>
@@ -247,7 +334,6 @@ const EncounterForm = ({ datas }) => {
                 <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
                   Patient Information
                 </h6>
-                <h1>{formData.doctorNik}</h1>
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-12/12 px-4">
                     <div className="relative w-full mb-3">
@@ -441,33 +527,6 @@ const EncounterForm = ({ datas }) => {
                   {loading ? "Loading..." : "Kirim Data"}
                 </Button>
               </form>
-              <button
-              className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm"
-              onClick={handleGetIHS}
-            >
-              getIHS-Participant
-            </button>
-      
-            <button
-              className="inline-flex ml-2 mt-2 text-white bg-[#4CAF50] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-4CAF50 text-sm"
-              onClick={handleCopyIHS}
-            >
-              Copy IHS ID
-            </button>
-      
-            {/* Modal */}
-            {isModalOpen && (
-              <div className="modal-overlay">
-                <div className="modal">
-                  <span className="close" onClick={handleCloseModal}>
-                    &times;
-                  </span>
-                  <div className="modal-content">
-                    <p>IHS ID has been copied successfully.</p>
-                  </div>
-                </div>
-              </div>
-            )}
             </div>
           </div>
         </div>

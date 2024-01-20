@@ -1,21 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 
-const Modal = ({ handleCloseModal, patientId, patientName, token }) => {
+const Modal = ({ handleCloseModal, patientId, patientName, ihsId }) => {
   const [copySuccess, setCopySuccess] = useState(false);
 
-  const handleCopyToken = () => {
-    if (token) {
-      navigator.clipboard.writeText(token)
-        .then(() => {
-          console.log("Token berhasil dicopy");
-          setCopySuccess(true);
-          // Tambahkan logika atau tampilkan pesan sukses di sini jika diperlukan
-        })
-        .catch((err) => {
-          console.error("Error copying token:", err);
-          // Tambahkan logika atau tampilkan pesan error di sini jika diperlukan
-        });
+  const handleCopyIHS = () => {
+    try {
+      navigator.clipboard.writeText(ihsId);
+      console.log('IHS ID copied to clipboard:', ihsId);
+      setCopySuccess(true);
+    } catch (error) {
+      console.error('Error copying IHS ID to clipboard:', error);
     }
   };
 
@@ -38,14 +33,14 @@ const Modal = ({ handleCloseModal, patientId, patientName, token }) => {
                       Generate ID: {patientId}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Generate Token: {token}
+                      Generate IHS ID: {ihsId}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-              <Link to="/encounterform"> {/* Use Link component for navigation */}
+              <Link to="/encounterform">
                 <button
                   type="button"
                   className="inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-400 sm:ml-3 sm:w-auto"
@@ -63,11 +58,10 @@ const Modal = ({ handleCloseModal, patientId, patientName, token }) => {
               <button
                 type="button"
                 className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                onClick={handleCopyToken}
+                onClick={handleCopyIHS}
               >
-                Copy Token
+                Copy IHS ID
               </button>
-
             </div>
           </div>
         </div>
