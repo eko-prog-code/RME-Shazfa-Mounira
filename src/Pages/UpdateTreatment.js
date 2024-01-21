@@ -21,6 +21,7 @@ const UpdateTreatment = () => {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
   const [doctorNIK, setDoctorNIK] = useState('');
+  const lokasiID = 10000004;
 
   useEffect(() => {
     axios
@@ -104,6 +105,7 @@ const UpdateTreatment = () => {
       identifier: id,
       timestamp: timestamp,
       doctorNIK: doctorNIK,
+      lokasiID: lokasiID,
       Encounter_period_start: updatedTreatmentData.Encounter_period_start, // Ganti properti
     };
 

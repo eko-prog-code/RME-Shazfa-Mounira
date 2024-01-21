@@ -137,6 +137,7 @@ const NewTreatment = () => {
 
   const handleSubmit = async () => {
     try {
+      const lokasiID = 10000004;
       // Persiapkan data yang akan dikirim ke Firebase Realtime Database
       const dataToSend = {
         timestamp: new Date().getTime(),
@@ -150,6 +151,7 @@ const NewTreatment = () => {
         participant: participant,
         doctorNIK: doctorNIK,
         images: uploadedImages,
+        lokasiID: lokasiID,
       };
 
       // Kirim data ke Firebase Realtime Database

@@ -130,6 +130,7 @@ const SatuSehat = () => {
                     <p>Medication: {record.Medication}</p>
                     <p>Participant: {record.participant}</p>
                     <p>Participant NIK: {record.doctorNIK}</p>
+                    <p>Lokasi ID: {record.lokasiID}</p>
                     <p>Encounter Period: {format(new Date(record.Encounter_period_start), 'yyyy-MM-dd HH:mm:ss')}</p>
                   </div>
                   <Link
@@ -140,6 +141,7 @@ const SatuSehat = () => {
                       patientNIK: patient.identifier,
                       periodeStart: record.Encounter_period_start,
                       doctorNIK: record.doctorNIK,
+                      lokasiID: record.lokasiID,
                     }}
                   >
                     <Button

@@ -6,8 +6,7 @@ import './Modal.css'
 
 const EncounterForm = ({ datas }) => {
   const [ihsId, setIhsId] = useState('');
-  const [ihsIdpatient, setIhsIdpatient] = useState('');  
-  const [IDlocation, setIDlocation] = useState('');
+  const [ihsIdpatient, setIhsIdpatient] = useState('');
   const [accessToken, setAccessToken] = useState(null);
   const [formData, setFormData] = useState(() => {
     // Function to format the date
@@ -36,11 +35,12 @@ const EncounterForm = ({ datas }) => {
       participantDisplay: datas.participant,
       patientNik: datas.patientNIK,
       doctorNik: datas.doctorNIK,
+      lokasiId: datas.lokasiID,
       periodStart: formatDate(datas.periodeStart),
       statusHistoryStart: formatDate(datas.periodeStart),
       serviceProviderReference:
         "Organization/dfd92855-8cec-4a10-be94-8edd8a097344",
-      locationReference: "",
+      locationReference: "Location/cae76cb6-eb07-4fad-8852-b38dcf249a1b",
       locationDisplay:
         "Ruang Pemeriksaan Poli Umum, Klinik Shazfa Mounira",
       // ... (add other form fields)
@@ -50,9 +50,8 @@ const EncounterForm = ({ datas }) => {
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     handleGetIHS(); // Panggil fungsi untuk mendapatkan ihsId saat komponen dimuat
-    handleGetIHSpatient(); 
+    handleGetIHSpatient();
     fetchTokenFromFirebase();
-    handleGetIDlocation();
   }, []);
 
   useEffect(() => {
@@ -227,89 +226,41 @@ const EncounterForm = ({ datas }) => {
   const handleGetIHSpatient = async () => {
     // Make sure formData.patientNik has a valid value
     if (!formData.patientNik) {
-        console.error('Error: patientNik is not defined in formData');
-        return;
+      console.error('Error: patientNik is not defined in formData');
+      return;
     }
 
     try {
-        // Get the access token before making the API request
-        const tokenResponse = await axios.get("http://localhost:5000/getIHSpatient?identifier=" + formData.patientNik);
-        const accessToken = tokenResponse.data.accessToken;
+      // Get the access token before making the API request
+      const tokenResponse = await axios.get("http://localhost:5000/getIHSpatient?identifier=" + formData.patientNik);
+      const accessToken = tokenResponse.data.accessToken;
 
-        // Include the access token in the request header
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-        };
+      // Include the access token in the request header
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      };
 
-        // Build the complete URL including the base URL and identifier
-        const apiUrl = `http://localhost:5000/getIHSpatient?identifier=${formData.patientNik}`;
+      // Build the complete URL including the base URL and identifier
+      const apiUrl = `http://localhost:5000/getIHSpatient?identifier=${formData.patientNik}`;
 
-        const response = await axios.get(apiUrl, { headers });
-        const data = response.data;
+      const response = await axios.get(apiUrl, { headers });
+      const data = response.data;
 
-        if (data.success) {
-            setIhsIdpatient(data.ihsIdpatient);
-            const formattedsubjectReference = `Patient/${data.ihsIdpatient}`;
-            setFormData((prevData) => ({
-                ...prevData,
-                subjectReference: formattedsubjectReference,
-            }));
-        } else {
-            console.error('Error getting IHS Patient:', data.error);
-        }
-    } catch (error) {
-        console.error('Error getting IHS Patient:', error);
-    }
-};
-
-const handleGetIDlocation = async () => {
-  const formData = {
-    lokasi: 10000004,
-    // ... (other form data if needed)
-  };
-
-  try {
-    // Get the access token before making the API request
-    const tokenResponse = await axios.get("http://localhost:5000/getIDlocation", {
-      params: {
-        organization: formData.lokasi
+      if (data.success) {
+        setIhsIdpatient(data.ihsIdpatient);
+        const formattedsubjectReference = `Patient/${data.ihsIdpatient}`;
+        setFormData((prevData) => ({
+          ...prevData,
+          subjectReference: formattedsubjectReference,
+        }));
+      } else {
+        console.error('Error getting IHS Patient:', data.error);
       }
-    });
-
-    const accessToken = tokenResponse.data.accessToken;
-
-    // Include the access token in the request header
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    };
-
-    // Build the complete URL including the base URL and organization parameter
-    const apiUrl = `https://api-satusehat-dev.dto.kemkes.go.id/fhir-r4/v1/Location?organization=${formData.lokasi}`;
-
-    const response = await axios.get(apiUrl, { headers });
-    const data = response.data;
-
-    if (data.success) {
-      // Assuming data.IDlocation is present in the API response
-      setIDlocation(data.IDlocation);
-      
-      const formattedlocationReference = `Location/${data.IDlocation}`;
-      setFormData((prevData) => ({
-        ...prevData,
-        locationReference: formattedlocationReference,
-      }));
-    } else {
-      console.error('Error getting IDlocation:', data.error);
+    } catch (error) {
+      console.error('Error getting IHS Patient:', error);
     }
-  } catch (error) {
-    console.error('Error getting IDlocation:', error);
-  }
-};
-
-
-
+  };
 
   return (
     <>
