@@ -105,7 +105,7 @@ const EncounterForm = ({ datas }) => {
       .catch((err) => console.log(err));
   };
   const saveData = async () => {
-    const postEncounterEndpoint = 'http://localhost:5000/forward-request'; // Update with your server endpoint
+    const postEncounterEndpoint = 'https://shazfabe.cyclic.app/forward-request'; // Update with your server endpoint
     const data = {
       resourceType: "Encounter",
       status: "arrived",
@@ -193,7 +193,7 @@ const EncounterForm = ({ datas }) => {
 
     try {
       // Ambil access token sebelum membuat permintaan API
-      const tokenResponse = await axios.get("http://localhost:5000/getIHS?identifier=" + formData.doctorNik);
+      const tokenResponse = await axios.get("https://shazfabe.cyclic.app/getIHS?identifier=" + formData.doctorNik);
       const accessToken = tokenResponse.data.accessToken;
 
       // Sertakan access token dalam header permintaan
@@ -203,7 +203,7 @@ const EncounterForm = ({ datas }) => {
       };
 
       // Bangun URL lengkap termasuk URL dasar dan identifier
-      const apiUrl = `http://localhost:5000/getIHS?identifier=${formData.doctorNik}`;
+      const apiUrl = `https://shazfabe.cyclic.app/getIHS?identifier=${formData.doctorNik}`;
 
       const response = await axios.get(apiUrl, { headers });
       const data = response.data;
@@ -232,7 +232,7 @@ const EncounterForm = ({ datas }) => {
 
     try {
       // Get the access token before making the API request
-      const tokenResponse = await axios.get("http://localhost:5000/getIHSpatient?identifier=" + formData.patientNik);
+      const tokenResponse = await axios.get("https://shazfabe.cyclic.app/getIHSpatient?identifier=" + formData.patientNik);
       const accessToken = tokenResponse.data.accessToken;
 
       // Include the access token in the request header
@@ -242,7 +242,7 @@ const EncounterForm = ({ datas }) => {
       };
 
       // Build the complete URL including the base URL and identifier
-      const apiUrl = `http://localhost:5000/getIHSpatient?identifier=${formData.patientNik}`;
+      const apiUrl = `https://shazfabe.cyclic.app/getIHSpatient?identifier=${formData.patientNik}`;
 
       const response = await axios.get(apiUrl, { headers });
       const data = response.data;
