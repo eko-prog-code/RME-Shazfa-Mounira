@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
-import './Modal.css'
+import "./Modal.css";
 
 const EncounterForm = ({ datas }) => {
-  const [ihsId, setIhsId] = useState('');
-  const [ihsIdpatient, setIhsIdpatient] = useState('');
+  const [ihsId, setIhsId] = useState("");
+  const [ihsIdpatient, setIhsIdpatient] = useState("");
   const [accessToken, setAccessToken] = useState(null);
   const [formData, setFormData] = useState(() => {
     // Function to format the date
@@ -28,10 +28,10 @@ const EncounterForm = ({ datas }) => {
     const initialFormData = {
       identifierSystem:
         "http://sys-ids.kemkes.go.id/encounter/dfd92855-8cec-4a10-be94-8edd8a097344",
-      identifierValue: "",
-      subjectReference: "",
+      identifierValue: ihsIdpatient,
+      subjectReference: ihsIdpatient,
       subjectDisplay: datas.patient,
-      participantReference: "", // Assign ihsId here,
+      participantReference: ihsId, // Assign ihsId here,
       participantDisplay: datas.participant,
       patientNik: datas.patientNIK,
       doctorNik: datas.doctorNIK,
@@ -41,8 +41,7 @@ const EncounterForm = ({ datas }) => {
       serviceProviderReference:
         "Organization/dfd92855-8cec-4a10-be94-8edd8a097344",
       locationReference: "Location/cae76cb6-eb07-4fad-8852-b38dcf249a1b",
-      locationDisplay:
-        "Ruang Pemeriksaan Poli Umum, Klinik Shazfa Mounira",
+      locationDisplay: "Ruang Pemeriksaan Poli Umum, Klinik Shazfa Mounira",
       // ... (add other form fields)
     };
     return initialFormData;
@@ -105,7 +104,7 @@ const EncounterForm = ({ datas }) => {
       .catch((err) => console.log(err));
   };
   const saveData = async () => {
-    const postEncounterEndpoint = 'https://shazfabe.cyclic.app/forward-request'; // Update with your server endpoint
+    const postEncounterEndpoint = "https://shazfabe.cyclic.app/forward-request"; // Update with your server endpoint
     const data = {
       resourceType: "Encounter",
       status: "arrived",
@@ -178,6 +177,7 @@ const EncounterForm = ({ datas }) => {
       })
       .then((res) => {
         console.log("data: ", res);
+        localStorage.setItem("encounter", JSON.stringify(res));
         resetForm();
       })
       .catch((err) => console.error("Gagal mengirim data:", err.response))
@@ -187,19 +187,21 @@ const EncounterForm = ({ datas }) => {
   const handleGetIHS = async () => {
     // Pastikan formData.doctorNik memiliki nilai yang valid
     if (!formData.doctorNik) {
-      console.error('Error: doctorNik is not defined in formData');
+      console.error("Error: doctorNik is not defined in formData");
       return;
     }
 
     try {
       // Ambil access token sebelum membuat permintaan API
-      const tokenResponse = await axios.get("https://shazfabe.cyclic.app/getIHS?identifier=" + formData.doctorNik);
+      const tokenResponse = await axios.get(
+        "https://shazfabe.cyclic.app/getIHS?identifier=" + formData.doctorNik
+      );
       const accessToken = tokenResponse.data.accessToken;
 
       // Sertakan access token dalam header permintaan
       const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`, // Ganti YOUR_ACCESS_TOKEN dengan token aktual
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`, // Ganti YOUR_ACCESS_TOKEN dengan token aktual
       };
 
       // Bangun URL lengkap termasuk URL dasar dan identifier
@@ -216,29 +218,32 @@ const EncounterForm = ({ datas }) => {
           participantReference: formattedParticipantReference,
         }));
       } else {
-        console.error('Error getting IHS Participant:', data.error);
+        console.error("Error getting IHS Participant:", data.error);
       }
     } catch (error) {
-      console.error('Error getting IHS Participant:', error);
+      console.error("Error getting IHS Participant:", error);
     }
   };
 
   const handleGetIHSpatient = async () => {
     // Make sure formData.patientNik has a valid value
     if (!formData.patientNik) {
-      console.error('Error: patientNik is not defined in formData');
+      console.error("Error: patientNik is not defined in formData");
       return;
     }
 
     try {
       // Get the access token before making the API request
-      const tokenResponse = await axios.get("https://shazfabe.cyclic.app/getIHSpatient?identifier=" + formData.patientNik);
+      const tokenResponse = await axios.get(
+        "https://shazfabe.cyclic.app/getIHSpatient?identifier=" +
+          formData.patientNik
+      );
       const accessToken = tokenResponse.data.accessToken;
 
       // Include the access token in the request header
       const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       };
 
       // Build the complete URL including the base URL and identifier
@@ -255,10 +260,10 @@ const EncounterForm = ({ datas }) => {
           subjectReference: formattedsubjectReference,
         }));
       } else {
-        console.error('Error getting IHS Patient:', data.error);
+        console.error("Error getting IHS Patient:", data.error);
       }
     } catch (error) {
-      console.error('Error getting IHS Patient:', error);
+      console.error("Error getting IHS Patient:", error);
     }
   };
 

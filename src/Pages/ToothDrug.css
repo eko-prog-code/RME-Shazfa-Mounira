@@ -11,12 +11,12 @@
   .search {
     margin-bottom: 20px;
   }
-  
+/*   
   input[type="text"] {
     width: 100%;
     padding: 10px;
     font-size: 16px;
-  }
+  } */
   
   .card-container {
     display: flex;

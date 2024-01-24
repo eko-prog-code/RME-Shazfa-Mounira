@@ -13,6 +13,8 @@ import ListBelanjaObat from './Pages/ListBelanjaObat';
 import UpdateTreatment from './Pages/UpdateTreatment';
 import SatuSehat from './Pages/SatuSehat';
 import Encounter from './Pages/Encounter'
+import Condition from './Pages/Condition';
+
 
 
 const App = () => {
@@ -33,6 +35,7 @@ const App = () => {
           <Route path="/derma-drug" element={<DermaDrug />} /> {/* New route for DermaDrug */}
           <Route path="/service-setting" element={<ServiceSetting />} />
           <Route path="/list-belanja-obat" element={<ListBelanjaObat />} />
+          <Route path="/condition" element={<Condition />} />
         </Routes>
       </div>
     </Router>

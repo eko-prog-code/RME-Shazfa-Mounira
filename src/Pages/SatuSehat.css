@@ -71,10 +71,10 @@ body {
     margin-right: 10px;
   }
   
-  input, button {
+  /* input, button {
     padding: 10px;
     margin-right: 10px;
-  }
+  } */
   
   button {
     cursor: pointer;
@@ -115,13 +115,13 @@ body {
   }
   
   /* Responsive styles */
-  @media (max-width: 767px) {
+  /* @media (max-width: 767px) {
     input, button {
       width: 100%;
       margin-right: 0;
       margin-bottom: 10px;
     }
-  }
+  } */
   
   /* SatuSehat.css */
 
