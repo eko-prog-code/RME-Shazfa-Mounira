@@ -120,16 +120,22 @@ const SatuSehat = () => {
                   <div key={record.identifier} className="medical-record">
                     <h4>Generate ID: {record.identifier}</h4>
                     <p>Complaint: {record.complaint}</p>
-                    <p>Observation: {record.Observation}</p>
+                    <p>Vital Signs:</p>
+                    <p>Tanda-Tanda Vital:</p>
+                    <p>SystolicBloodPressure: {record.systolicBloodPressure}</p>
+                    <p>DiastolicBloodPressure: {record.diastolicBloodPressure}</p>
+                    <p>HeartRate: {record.heartRate}</p>
+                    <p>HeartRate: {record.heartRate}</p>
+                    <p>BodyTemperature: {record.bodyTemperature}</p>
+                    <p>RespiratoryRate: {record.respiratoryRate}</p>
                     <p>
                       Condition Physical Examination:{" "}
                       {record.condition_physical_examination}
                     </p>
-                    <p>Diagnosis: {record.diagnosis}</p>
+                    <p>Diagnosis: {record.diagnosis.code} - {record.diagnosis.name}</p>
                     <p>Medication: {record.Medication}</p>
                     <p>Participant: {record.participant}</p>
                     <p>Participant NIK: {record.doctorNIK}</p>
-                    <p>Lokasi ID: {record.lokasiID}</p>
                     <p>
                       Encounter Period:{" "}
                       {format(
@@ -146,7 +152,6 @@ const SatuSehat = () => {
                       patientNIK: patient.identifier,
                       periodeStart: record.Encounter_period_start,
                       doctorNIK: record.doctorNIK,
-                      lokasiID: record.lokasiID,
                     }}
                   >
                     <Button
@@ -161,10 +166,12 @@ const SatuSehat = () => {
                     state={{
                       patient: patient.name,
                       observation: record.Observation,
+                      codeICD: record.diagnosis.code,
+                      dx: record.diagnosis.name,
                     }}
                   >
                     <Button className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm">
-                      Observation
+                      Condition
                     </Button>
                   </Link>
                   <Button className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm">

@@ -9,6 +9,11 @@ const NewTreatment = () => {
   const { id } = useParams();
   const [complaint, setComplaint] = useState('');
   const [condition_physical_examination, setConditionPhysicalExamination] = useState('');
+   const [systolicBloodPressure, setSystolicBloodPressure] = useState('');
+  const [diastolicBloodPressure, setDiastolicBloodPressure] = useState('');
+  const [heartRate, setHeartRate] = useState('');
+  const [bodyTemperature, setBodyTemperature] = useState('');
+  const [respiratoryRate, setRespiratoryRate] = useState('');
   const [Observation, setObservation] = useState('');
   const [diagnosis, setDiagnosis] = useState(''); // Mengganti dari 'medical_diagnosis' menjadi 'diagnosis'
   const [Medication, setMedication] = useState(''); // Mengganti dari 'Medication' menjadi 'Medication'
@@ -83,10 +88,6 @@ const NewTreatment = () => {
     setConditionPhysicalExamination(e.target.value);
   };
 
-  const handleObservationChange = (e) => {
-    setObservation(e.target.value);
-  };
-
   const handleDiagnosisChange = (e) => {
     setDiagnosis(e.target.value);
     setIsTyping(!!e.target.value);
@@ -101,6 +102,42 @@ const NewTreatment = () => {
     setDiagnosis(`${selectedDiagnosis.code} - ${selectedDiagnosis.name}`);
     setFilteredIcdData([]);
   };
+
+   const handleSystolicBloodPressureChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setSystolicBloodPressure(value);
+    }
+  };
+
+  const handleDiastolicBloodPressureChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setDiastolicBloodPressure(value);
+    }
+  };
+
+  const handleHeartRateChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setHeartRate(value);
+    }
+  };
+
+  const handleBodyTemperatureChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setBodyTemperature(value);
+    }
+  };
+
+  const handleRespiratoryRateChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setRespiratoryRate(value);
+    }
+  };
+
 
   useEffect(() => {
     // Fetch NIK data from the API or use a predefined list
@@ -137,21 +174,27 @@ const NewTreatment = () => {
 
   const handleSubmit = async () => {
     try {
-      const lokasiID = 10000004;
       // Persiapkan data yang akan dikirim ke Firebase Realtime Database
+      const [diagnosisCode, diagnosisName] = diagnosis.split(" - ");
       const dataToSend = {
         timestamp: new Date().getTime(),
         Encounter_period_start: new Date(`${tanggal} ${jamMenitDetik}`),
         identifier: id,
         complaint: complaint,
         condition_physical_examination: condition_physical_examination,
-        Observation: Observation,
-        diagnosis: diagnosis,
+        diagnosis: {
+          code: diagnosisCode,
+          name: diagnosisName,
+        },
         Medication: Medication,
         participant: participant,
         doctorNIK: doctorNIK,
         images: uploadedImages,
-        lokasiID: lokasiID,
+        systolicBloodPressure: systolicBloodPressure,
+        diastolicBloodPressure: diastolicBloodPressure,
+        heartRate: heartRate,
+        bodyTemperature: bodyTemperature,
+        respiratoryRate: respiratoryRate,
       };
 
       // Kirim data ke Firebase Realtime Database
@@ -189,8 +232,47 @@ const NewTreatment = () => {
               ))}
             </div>
           )}
-          <h3>Tanda Vital</h3>
-          <input type="text" value={Observation} onChange={handleObservationChange} className="unique-input-field" />
+           <h3>Tanda Vital</h3>
+          <label>Systolic Blood Pressure:</label>
+          <input
+            type="text"
+            value={systolicBloodPressure}
+            onChange={handleSystolicBloodPressureChange}
+            className="unique-input-field"
+          />
+
+          <label>Diastolic Blood Pressure:</label>
+          <input
+            type="text"
+            value={diastolicBloodPressure}
+            onChange={handleDiastolicBloodPressureChange}
+            className="unique-input-field"
+          />
+
+          <label>Heart Rate:</label>
+          <input
+            type="text"
+            value={heartRate}
+            onChange={handleHeartRateChange}
+            className="unique-input-field"
+          />
+
+          <label>Suhu Badan:</label>
+          <input
+            type="text"
+            value={bodyTemperature}
+            onChange={handleBodyTemperatureChange}
+            className="unique-input-field"
+          />
+
+          <label>Respiratory Rate:</label>
+          <input
+            type="text"
+            value={respiratoryRate}
+            onChange={handleRespiratoryRateChange}
+            className="unique-input-field"
+          />
+
           <h3>Diagnosa Medis</h3>
           <input
             type="text"

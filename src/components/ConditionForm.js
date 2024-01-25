@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import "./ConditionForm.css";
 
 const ConditionForm = ({ datas }) => {
   const [encounterId, setEncounterId] = useState(null);
@@ -7,6 +9,14 @@ const ConditionForm = ({ datas }) => {
   const [participant, setParticipant] = useState([]);
   const [patient, setPatient] = useState(null);
   const [ihsPatient, setIhsPatient] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    patient: "",
+    observation: "",
+    codeICD: "",
+    dx: "",
+  });
 
   useEffect(() => {
     const storedDataString = localStorage.getItem("encounter");
@@ -24,33 +34,198 @@ const ConditionForm = ({ datas }) => {
       console.error("No data found in local storage.");
     }
   }, []);
-  return (
-    <>
-      <Link to={"/satusehat"}>
-        <button
-          className=" text-white bg-[#2196F3] border-0 rounded-md py-2 px-5 focus:outline-none hover:bg-2196F3 text-sm"
-          type="submit"
-        >
-          Back
-        </button>
-      </Link>
-      <p className="text-center">encounter id: {encounterId}</p>
-      <p className="text-center">observation: {datas.observation}</p>
-      <p className="text-center">patient name: {patient}</p>
-      <p className="text-center">patient id: {ihsPatient}</p>
-      <p className="text-center">date: {date}</p>
 
-      <ul className="text-center">
-        {participant.map((datas, index) => (
-          <li key={index}>
-            <strong>Name:</strong> {datas.individual.display}
-            <br />
-            <strong>Reference:</strong> {datas.individual.reference}
-            <br />
-          </li>
-        ))}
-      </ul>
-    </>
+  useEffect(() => {
+    // In ConditionForm component, just after receiving the data
+    console.log("Data received in ConditionForm:", {
+      patient: formData.patient,
+      observation: formData.observation,
+      codeICD: formData.code?.coding[0]?.code,
+      dx: formData.code?.coding[0]?.name,
+    });
+  }, [formData]);
+
+  const initialFormData = {
+    resourceType: "Condition",
+    clinicalStatus: {
+      coding: [
+        {
+          system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          code: "active",
+          display: "Active",
+        },
+      ],
+    },
+    category: [
+      {
+        coding: [
+          {
+            system: "http://terminology.hl7.org/CodeSystem/condition-category",
+            code: "encounter-diagnosis",
+            display: "Encounter Diagnosis",
+          },
+        ],
+      },
+    ],
+    code: {
+      coding: [
+        {
+          system: "http://hl7.org/fhir/sid/icd-10",
+          code: datas.codeICD,
+          display: datas.dx,
+        },
+      ],
+    },
+    subject: {
+      reference: `Patient/${ihsPatient}`, // Updated to use ihsPatient
+      display: patient,
+    },
+    encounter: {
+      reference: `Encounter/${encounterId}`, // Updated to use encounterId
+    },
+    onsetDateTime: date, // Updated to use date
+    recordedDate: date, // Updated to use date
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    fetchTokenFromFirebase()
+      .then((res) => saveData(res))
+      .catch((err) => console.log(err));
+  };
+
+  const [accessToken, setAccessToken] = useState(null);
+  const fetchTokenFromFirebase = async () => {
+    try {
+      const firebaseTokenUrl =
+        "https://rme-shazfa-mounira-default-rtdb.firebaseio.com/token.json";
+      const response = await axios.get(firebaseTokenUrl);
+      const tokenFromFirebase = response.data.token;
+
+      if (tokenFromFirebase) {
+        console.log("Token dari Firebase:", tokenFromFirebase);
+        setAccessToken(tokenFromFirebase);
+      } else {
+        console.error("Token tidak ditemukan dari Firebase.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching access token from Firebase:", error);
+      return null;
+    }
+  };
+
+  const saveData = async () => {
+    const postConditionEndpoint =
+      "https://shazfabe.cyclic.app/forward-request-condition";
+
+    const data = {
+      resourceType: "Condition",
+      clinicalStatus: {
+        coding: [
+          {
+            system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            code: "active",
+            display: "Active",
+          },
+        ],
+      },
+      category: [
+        {
+          coding: [
+            {
+              system: "http://terminology.hl7.org/CodeSystem/condition-category",
+              code: "encounter-diagnosis",
+              display: "Encounter Diagnosis",
+            },
+          ],
+        },
+      ],
+      code: {
+        coding: [
+          {
+            system: "http://hl7.org/fhir/sid/icd-10",
+            code: datas.codeICD,
+            display: datas.dx,
+          },
+        ],
+      },
+      subject: {
+        reference: `Patient/${ihsPatient}`, // Updated to use ihsPatient
+        display: patient,
+      },
+      encounter: {
+        reference: `Encounter/${encounterId}`, // Updated to use encounterId
+      },
+      onsetDateTime: date, // Updated to use date
+      recordedDate: date, // Updated to use date
+    };
+
+    setLoading(true);
+    axios
+      .post(postConditionEndpoint, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log("data: ", res);
+        localStorage.setItem("encounter", JSON.stringify(res));
+        resetForm();
+      })
+      .catch((err) => console.error("Gagal mengirim data:", err.response))
+      .finally(() => setLoading(false));
+  };
+
+  const resetForm = () => {
+    // Reset form logic here
+    setFormData({
+      patient: "",
+      observation: "",
+      codeICD: "",
+      dx: "",
+    });
+  };
+
+  return (
+    <div className="card-container">
+      <div className="glow-card">
+        <Link to={"/satusehat"}>
+          <button className="back-button">
+            Back
+          </button>
+        </Link>
+        <h1>Condition Page</h1>
+        <p className="info-text">Encounter ID: {encounterId}</p>
+
+        <p className="info-text left-align-text">Patient Name: {patient}</p>
+        <p className="info-text left-align-text">Patient ID: {ihsPatient}</p>
+        <p className="info-text left-align-text">Code ICD: {initialFormData.code.coding[0].code}</p>
+        <p className="info-text left-align-text">Dx Medis: {initialFormData.code.coding[0].display}</p>
+        <p className="info-text left-align-text">Date: {date}</p>
+
+        <ul className="participant-list left-align-text">
+          {participant.map((datas, index) => (
+            <li key={index}>
+              <strong>Name:</strong> {datas.individual.display}
+              <br />
+              <strong>Reference:</strong> {datas.individual.reference}
+              <br />
+            </li>
+          ))}
+        </ul>
+
+
+        <button
+          className="submit-button"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
   );
 };
 

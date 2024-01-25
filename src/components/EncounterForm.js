@@ -35,7 +35,6 @@ const EncounterForm = ({ datas }) => {
       participantDisplay: datas.participant,
       patientNik: datas.patientNIK,
       doctorNik: datas.doctorNIK,
-      lokasiId: datas.lokasiID,
       periodStart: formatDate(datas.periodeStart),
       statusHistoryStart: formatDate(datas.periodeStart),
       serviceProviderReference:

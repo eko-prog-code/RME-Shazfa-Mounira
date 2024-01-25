@@ -8,20 +8,57 @@ import './UpdateTreatment.css';
 const UpdateTreatment = () => {
   const { id, treatmentId } = useParams();
   const [treatmentData, setTreatmentData] = useState(null);
+  const [doctors, setDoctors] = useState([]);
   const [updatedTreatmentData, setUpdatedTreatmentData] = useState({
     complaint: '',
     condition_physical_examination: '',
-    Observation: '',
     Medication: '',
     diagnosis: '',
     participant: '',
     images: [],
     Encounter_period_start: '', // Ganti properti
+    systolicBloodPressure: '',
+    diastolicBloodPressure: '',
+    heartRate: '',
+    bodyTemperature: '',
+    respiratoryRate: '',
   });
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const navigate = useNavigate();
   const [doctorNIK, setDoctorNIK] = useState('');
-  const lokasiID = 10000004;
+  const [icdData, setIcdData] = useState([]);
+  const [filteredIcdData, setFilteredIcdData] = useState([]);
+  const [diagnosis, setDiagnosis] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [initialDiagnosis, setInitialDiagnosis] = useState('');
+  const [diagnosisData, setDiagnosisData] = useState([]);
+
+  useEffect(() => {
+    const predefinedIcdData = [
+      { code: 'A03.9', name: 'Dysentery, unspecified' },
+      { code: 'A90', name: 'Dengue fever [classical dengue]' },
+      // ... (predefined codes and names)
+    ];
+
+    setIcdData(predefinedIcdData);
+  }, []);
+
+  useEffect(() => {
+    const doctorNIKData = {
+      'dr. Yohanes hendra budi santoso': '3215131301790004',
+      'dr. yesi novia Ambarani': '3205155812920006',
+      'Practitioner 1': '7209061211900001',
+      // ... (add NIK for other doctors if needed)
+    };
+  
+    setDoctorNIK(doctorNIKData[updatedTreatmentData.participant]);
+  
+    // Define the 'doctors' array
+    const doctorsArray = ['dr. Yohanes hendra budi santoso', 'dr. yesi novia Ambarani', 'Practitioner 1'];
+    setDoctors(doctorsArray); // Add this line to set the 'doctors' state
+  
+  }, [updatedTreatmentData.participant]);
+  
 
   useEffect(() => {
     axios
@@ -32,12 +69,16 @@ const UpdateTreatment = () => {
         setUpdatedTreatmentData({
           complaint: response.data.complaint || '',
           condition_physical_examination: response.data.condition_physical_examination || '',
-          Observation: response.data.Observation || '',
           Medication: response.data.Medication || '',
           diagnosis: response.data.diagnosis || '',
           participant: response.data.participant || '',
           images: response.data.images || [],
-          Encounter_period_start: timestamp, // Set Encounter_period_start here
+          Encounter_period_start: timestamp,
+          systolicBloodPressure: response.data.systolicBloodPressure || '',
+          diastolicBloodPressure: response.data.diastolicBloodPressure || '',
+          heartRate: response.data.heartRate || '',
+          bodyTemperature: response.data.bodyTemperature || '',
+          respiratoryRate: response.data.respiratoryRate || '',
         });
       })
       .catch((error) => {
@@ -56,6 +97,18 @@ const UpdateTreatment = () => {
     setDoctorNIK(doctorNIKData[updatedTreatmentData.participant]);
   }, [updatedTreatmentData.participant]);
 
+  useEffect(() => {
+    axios
+      .get(`https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${id}/medical_records/${treatmentId}/diagnosis.json`)
+      .then((response) => {
+        if (response.data) {
+          setDiagnosisData(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching diagnosis data:', error);
+      });
+  }, [id, treatmentId]);
 
   const handleImageDrop = async (acceptedFiles) => {
     try {
@@ -64,7 +117,6 @@ const UpdateTreatment = () => {
         const formData = new FormData();
         formData.append('file', file);
 
-        // Use URL Firebase Storage to upload the image
         const storageUrl = `https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/images%2F${timestamp}_${file.name}?alt=media`;
 
         await axios.post(storageUrl, formData, {
@@ -73,17 +125,14 @@ const UpdateTreatment = () => {
           },
         });
 
-        // Build the image download URL after uploading
         const imageUrl = `https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/images%2F${timestamp}_${file.name}?alt=media`;
 
-        // Update state with the image download URL
         setUpdatedTreatmentData((prevData) => ({
           ...prevData,
           images: [...prevData.images, imageUrl],
         }));
       });
 
-      // Wait for all image upload promises to finish
       await Promise.all(uploadPromises);
 
       setUpdateSuccess(true);
@@ -92,21 +141,33 @@ const UpdateTreatment = () => {
     }
   };
 
-
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     onDrop: handleImageDrop,
   });
 
   const updateTreatment = () => {
+    const diagnosisArray = typeof updatedTreatmentData.diagnosis === 'string'
+      ? updatedTreatmentData.diagnosis.split(" - ")
+      : ['', ''];
+
+    const [diagnosisCode, diagnosisName] = diagnosisArray;
     const timestamp = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
     const updatedDataWithTimestamp = {
       ...updatedTreatmentData,
       identifier: id,
       timestamp: timestamp,
       doctorNIK: doctorNIK,
-      lokasiID: lokasiID,
-      Encounter_period_start: updatedTreatmentData.Encounter_period_start, // Ganti properti
+      Encounter_period_start: updatedTreatmentData.Encounter_period_start,
+      systolicBloodPressure: updatedTreatmentData.systolicBloodPressure,
+      diastolicBloodPressure: updatedTreatmentData.diastolicBloodPressure,
+      heartRate: updatedTreatmentData.heartRate,
+      bodyTemperature: updatedTreatmentData.bodyTemperature,
+      respiratoryRate: updatedTreatmentData.respiratoryRate,
+      diagnosis: {
+        code: diagnosisCode,
+        name: diagnosisName,
+      },
     };
 
     axios
@@ -122,7 +183,6 @@ const UpdateTreatment = () => {
         console.error('Error updating treatment:', error);
       });
   };
-
 
   const renderImagePreviews = () => {
     return (
@@ -147,12 +207,47 @@ const UpdateTreatment = () => {
     });
   };
 
-  const [doctors, setDoctors] = useState([
-    'dr. Yohanes hendra budi santoso',
-    'dr. yesi novia Ambarani',
-    'Practitioner 1',
-    // ... (tambahkan dokter lain jika diperlukan)
-  ]);
+  useEffect(() => {
+    if (treatmentData) {
+      const { diagnosis } = treatmentData;
+      if (diagnosis && diagnosis.code && diagnosis.name) {
+        setInitialDiagnosis(`${diagnosis.code} - ${diagnosis.name}`);
+      }
+    }
+  }, [treatmentData]);
+
+  const handleDiagnosisChange = (e) => {
+    const inputValue = e.target.value;
+    setDiagnosis(inputValue);
+    setIsTyping(true);
+    filterIcdData(inputValue);
+  };
+
+  const filterIcdData = (filterValue) => {
+    const filteredList = icdData.filter(
+      (item) =>
+        item.code.toLowerCase().includes(filterValue.toLowerCase()) ||
+        item.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
+    setFilteredIcdData(filteredList);
+  };
+
+  const handleDiagnosisItemClick = (selectedDiagnosis) => {
+    setDiagnosis(`${selectedDiagnosis.code} - ${selectedDiagnosis.name}`);
+    setIsTyping(false);
+
+    setUpdatedTreatmentData((prevData) => ({
+      ...prevData,
+      diagnosis: `${selectedDiagnosis.code} - ${selectedDiagnosis.name}`,
+    }));
+  };
+
+  const handleKeyPress = (e) => {
+    const isValidInput = /^\d*\.?\d*$/.test(e.key);
+    if (!isValidInput) {
+      e.preventDefault();
+    }
+  };
 
   return (
     <div className="UpdateTreatment-container">
@@ -196,12 +291,58 @@ const UpdateTreatment = () => {
             />
 
             <label htmlFor="Observation" className="UpdateTreatment-label">Tanda Vital:</label>
+            <label htmlFor="systolicBloodPressure" className="UpdateTreatment-label">Systolic Blood Pressure:</label>
             <input
               type="text"
-              id="Observation"
-              name="Observation"
-              value={updatedTreatmentData.Observation}
+              id="systolicBloodPressure"
+              name="systolicBloodPressure"
+              value={updatedTreatmentData.systolicBloodPressure}
               onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              className="UpdateTreatment-input"
+            />
+
+            <label htmlFor="diastolicBloodPressure" className="UpdateTreatment-label">Diastolic Blood Pressure:</label>
+            <input
+              type="text"
+              id="diastolicBloodPressure"
+              name="diastolicBloodPressure"
+              value={updatedTreatmentData.diastolicBloodPressure}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              className="UpdateTreatment-input"
+            />
+
+            <label htmlFor="heartRate" className="UpdateTreatment-label">Heart Rate:</label>
+            <input
+              type="text"
+              id="heartRate"
+              name="heartRate"
+              value={updatedTreatmentData.heartRate}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              className="UpdateTreatment-input"
+            />
+
+            <label htmlFor="bodyTemperature" className="UpdateTreatment-label">Suhu Badan:</label>
+            <input
+              type="text"
+              id="bodyTemperature"
+              name="bodyTemperature"
+              value={updatedTreatmentData.bodyTemperature}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              className="UpdateTreatment-input"
+            />
+
+            <label htmlFor="respiratoryRate" className="UpdateTreatment-label">Respiratory Rate:</label>
+            <input
+              type="text"
+              id="respiratoryRate"
+              name="respiratoryRate"
+              value={updatedTreatmentData.respiratoryRate}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
               className="UpdateTreatment-input"
             />
 
@@ -230,11 +371,26 @@ const UpdateTreatment = () => {
               type="text"
               id="diagnosis"
               name="diagnosis"
-              value={updatedTreatmentData.diagnosis}
-              onChange={handleInputChange}
+              value={diagnosis}
+              onChange={handleDiagnosisChange}
               className="UpdateTreatment-input"
+              placeholder="Filter atau klik untuk memilih"
             />
+            {isTyping && (
+              <ul className="unique-filtered-list">
+                {filteredIcdData.map((item) => (
+                  <li key={item.code} onClick={() => handleDiagnosisItemClick(item)}>
+                    {`${item.code} - ${item.name}`}
+                  </li>
+                ))}
+              </ul>
+            )}
 
+            {initialDiagnosis && (
+              <p>
+                Diagnosa Awal: {initialDiagnosis}
+              </p>
+            )}
             <label htmlFor="participant" className="UpdateTreatment-label">Dokter DPJP:</label>
             <select
               id="participant"

@@ -229,9 +229,15 @@ const EMR = () => {
                                 <p>Tanggal dan Waktu: {format(new Date(treatment.timestamp), 'dd MMMM yyyy HH:mm:ss')}</p>
                                 <p>Keluhan: {treatment.complaint}</p>
                                 <p>Pemeriksaan Fisik: {treatment.condition_physical_examination}</p>
-                                <p>Tanda-Tanda Vital: {treatment.Observation}</p>
+                                <p>Tanda-Tanda Vital:</p>
+                                <p>SystolicBloodPressure: {treatment.systolicBloodPressure}</p>
+                                <p>DiastolicBloodPressure: {treatment.diastolicBloodPressure}</p>
+                                <p>HeartRate: {treatment.heartRate}</p>
+                                <p>HeartRate: {treatment.heartRate}</p>
+                                <p>BodyTemperature: {treatment.bodyTemperature}</p>
+                                <p>RespiratoryRate: {treatment.respiratoryRate}</p>
                                 <p>Terapi Obat: {treatment.Medication}</p>
-                                <p>Diagnosa Medis: {treatment.diagnosis}</p>
+                                <p>Diagnosis Medis: {treatment.diagnosis.code} - {treatment.diagnosis.name}</p>
                                 <p>DPJP (Participant): {treatment.participant}</p>
                                 {treatment.images && treatment.images.length > 0 && (
                                     <img
