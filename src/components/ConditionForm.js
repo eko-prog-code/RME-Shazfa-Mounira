@@ -43,9 +43,9 @@ const ConditionForm = ({ datas }) => {
       {
         coding: [
           {
-            system: "http://terminology.hl7.org/CodeSystem/condition-category",
-            code: datas.codeICD,
-            display: datas.dx,
+            "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+              "code": "encounter-diagnosis",
+              "display": "Encounter Diagnosis",
           },
         ],
       },
@@ -118,10 +118,9 @@ const ConditionForm = ({ datas }) => {
         {
           coding: [
             {
-              system:
-                "http://terminology.hl7.org/CodeSystem/condition-category",
-              code: datas.codeICD,
-              display: datas.dx,
+              "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+              "code": "encounter-diagnosis",
+              "display": "Encounter Diagnosis",
             },
           ],
         },
