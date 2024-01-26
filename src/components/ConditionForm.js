@@ -4,69 +4,53 @@ import axios from "axios";
 import "./ConditionForm.css";
 
 const ConditionForm = ({ datas }) => {
-  const [encounterId, setEncounterId] = useState(null);
-  const [date, setDate] = useState(null);
+  const [encounterId, setEncounterId] = useState("");
+  const [date, setDate] = useState("");
   const [participant, setParticipant] = useState([]);
-  const [patient, setPatient] = useState(null);
-  const [ihsPatient, setIhsPatient] = useState(null);
-  const [ihsIdpatient, setIhsIdpatient] = useState("");
+  const [patient, setPatient] = useState("");
+  const [ihsPatient, setIhsPatient] = useState("");
   const [loading, setLoading] = useState(false);
 
-useEffect(() => {
-  const storedDataString = localStorage.getItem("encounter");
+  useEffect(() => {
+    const storedDataString = localStorage.getItem("encounter");
 
-  if (storedDataString) {
-    const storedData = JSON.parse(storedDataString);
+    if (storedDataString) {
+      const storedData = JSON.parse(storedDataString);
 
-    setEncounterId(storedData.data.id);
-    setDate(storedData.data.period.start);
-    setParticipant(storedData.data.participant);
-    setPatient(storedData.data.subject.display);
-
-    // Set ihsPatient only if it's available in the stored data
-    if (storedData.data.subject.reference) {
+      setEncounterId(storedData.data.id);
+      setDate(storedData.data.period.start);
+      setParticipant(storedData.data.participant);
+      setPatient(storedData.data.subject.display);
       setIhsPatient(storedData.data.subject.reference);
+      console.log("Retrieved data from local storage:", storedData);
+    } else {
+      console.error("No data found in local storage.");
     }
-
-    console.log("Retrieved data from local storage:", storedData);
-  } else {
-    console.error("No data found in local storage.");
-  }
-}, []);
-
-
-  const ihsPatientReference = ihsPatient && ihsPatient.startsWith("Patient/") ? `Patient/${ihsPatient.split('/')[2]}` : '';
-
-if (!ihsPatientReference) {
-  console.error("Error: ihsPatientReference is undefined or has an unexpected format.");
-}
-
+  }, []);
 
   const initialFormData = {
-  resourceType: "Condition",
-  subjectReference: ihsIdpatient,
-  patientNik: datas.patientNIK,
-  clinicalStatus: {
-    coding: [
-      {
-        system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
-        code: "active",
-        display: "Active",
-      },
-    ],
-  },
-  category: [
-    {
+    resourceType: "Condition",
+    clinicalStatus: {
       coding: [
         {
-          system: "http://terminology.hl7.org/CodeSystem/condition-category",
-          code: "encounter-diagnosis",
-          display: "Encounter Diagnosis",
+          system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
+          code: "active",
+          display: "Active",
         },
       ],
     },
-  ],
-  code: {
+    category: [
+      {
+         "coding": [
+            {
+               "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+               "code": "encounter-diagnosis",
+               "display": "Encounter Diagnosis"
+            }
+         ]
+      }
+   ],
+   code: {
     coding: [
       {
         system: "http://hl7.org/fhir/sid/icd-10",
@@ -75,26 +59,18 @@ if (!ihsPatientReference) {
       },
     ],
   },
-  subject: {
-    reference: ihsPatientReference,
-    display: patient,
-  },
-  encounter: {
-    reference: `Encounter/${encounterId}`,
-  },
-  onsetDateTime: date,
-  recordedDate: date,
-  identifierSystem: "http://sys-ids.kemkes.go.id/encounter/dfd92855-8cec-4a10-be94-8edd8a097344",
-  identifierValue: ihsIdpatient,
-  participantReference: ihsId, // Assign ihsId here
-  participantDisplay: datas.participant,
-  // Add other form fields as needed
-};
-
-  useEffect(() => {
-    handleGetIHSpatient();
-  }, []);
-
+    subjectReference: ihsPatient,
+    subjectDisplay: datas.patient,
+    subject: {
+      reference: ihsPatient,
+      display: patient,
+    },
+    encounter: {
+      reference: `Encounter/${encounterId}`,
+    },
+    onsetDateTime: date,
+    recordedDate: date,
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -142,15 +118,15 @@ if (!ihsPatientReference) {
       },
       category: [
         {
-          coding: [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/condition-category",
-              "code": "encounter-diagnosis",
-              "display": "Encounter Diagnosis",
-            },
-          ],
-        },
-      ],
+           "coding": [
+              {
+                 "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                 "code": "encounter-diagnosis",
+                 "display": "Encounter Diagnosis"
+              }
+           ]
+        }
+     ],
       code: {
         coding: [
           {
@@ -161,14 +137,14 @@ if (!ihsPatientReference) {
         ],
       },
       subject: {
-       reference: initialFormData.subjectReference,
-        display: patient,
+        reference: initialFormData.subjectReference,
+        display: initialFormData.subjectDisplay,
       },
       encounter: {
-        reference: `Encounter/${encounterId}`, // Updated to use encounterId
+        reference: `Encounter/${encounterId}`,
       },
-      onsetDateTime: date, // Updated to use date
-      recordedDate: date, // Updated to use date
+      onsetDateTime: date,
+      recordedDate: date,
     };
 
     setLoading(true);
@@ -187,41 +163,6 @@ if (!ihsPatientReference) {
       .finally(() => setLoading(false));
   };
 
-  const handleGetIHSpatient = async () => {
-    try {
-      if (!initialFormData.patientNik) {
-        console.error("Error: patientNik is not defined in formData");
-        return;
-      }
-
-      const tokenResponse = await axios.get(
-        "https://shazfabe.cyclic.app/getIHSpatient?identifier=" +
-          initialFormData.patientNik
-      );
-      const accessToken = tokenResponse.data.accessToken;
-
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      };
-
-      const apiUrl = `https://shazfabe.cyclic.app/getIHSpatient?identifier=${initialFormData.patientNik}`;
-
-      const response = await axios.get(apiUrl, { headers });
-      const data = response.data;
-
-      if (data.success) {
-        setIhsIdpatient(data.ihsIdpatient);
-      } else {
-        console.error("Error getting IHS Patient:", data.error);
-        throw new Error("Error getting IHS Patient");
-      }
-    } catch (error) {
-      console.error("Error getting or setting IHS Patient:", error);
-      throw error; // Propagate the error to saveData
-    }
-  };
-
   return (
     <div className="card-container">
       <div className="glow-card">
@@ -233,8 +174,8 @@ if (!ihsPatientReference) {
 
         <p className="info-text left-align-text">Patient Name: {patient}</p>
         <p className="info-text left-align-text">Patient ID: {ihsPatient}</p>
-        <p className="info-text left-align-text">Code ICD: {initialFormData.code.coding[0].code}</p>
-        <p className="info-text left-align-text">Dx Medis: {initialFormData.code.coding[0].display}</p>
+        <p className="info-text left-align-text">Code ICD: {initialFormData.category[0].coding[0].code}</p>
+        <p className="info-text left-align-text">Dx Medis: {initialFormData.category[0].coding[0].display}</p>
         <p className="info-text left-align-text">Date: {date}</p>
 
         <ul className="participant-list left-align-text">
