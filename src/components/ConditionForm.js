@@ -11,22 +11,28 @@ const ConditionForm = ({ datas }) => {
   const [ihsPatient, setIhsPatient] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const storedDataString = localStorage.getItem("encounter");
+useEffect(() => {
+  const storedDataString = localStorage.getItem("encounter");
 
-    if (storedDataString) {
-      const storedData = JSON.parse(storedDataString);
+  if (storedDataString) {
+    const storedData = JSON.parse(storedDataString);
 
-      setEncounterId(storedData.data.id);
-      setDate(storedData.data.period.start);
-      setParticipant(storedData.data.participant);
-      setPatient(storedData.data.subject.display);
+    setEncounterId(storedData.data.id);
+    setDate(storedData.data.period.start);
+    setParticipant(storedData.data.participant);
+    setPatient(storedData.data.subject.display);
+
+    // Set ihsPatient only if it's available in the stored data
+    if (storedData.data.subject.reference) {
       setIhsPatient(storedData.data.subject.reference);
-      console.log("Retrieved data from local storage:", storedData);
-    } else {
-      console.error("No data found in local storage.");
     }
-  }, []);
+
+    console.log("Retrieved data from local storage:", storedData);
+  } else {
+    console.error("No data found in local storage.");
+  }
+}, []);
+
 
   const ihsPatientReference = ihsPatient && ihsPatient.startsWith("Patient/") ? `Patient/${ihsPatient.split('/')[2]}` : '';
 
