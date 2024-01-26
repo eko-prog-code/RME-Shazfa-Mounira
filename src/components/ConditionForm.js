@@ -44,8 +44,8 @@ const ConditionForm = ({ datas }) => {
         coding: [
           {
             system: "http://terminology.hl7.org/CodeSystem/condition-category",
-            code: "encounter-diagnosis",
-            display: "Encounter Diagnosis",
+            code: datas.codeICD,
+            display: datas.dx,
           },
         ],
       },
@@ -60,7 +60,7 @@ const ConditionForm = ({ datas }) => {
       ],
     },
     subject: {
-      reference: `Patient/${ihsPatient}`, // Updated to use ihsPatient
+      reference: `Patient/${ihsPatient ? ihsPatient.split('/')[2] : ''}`, // Updated to use ihsPatient
       display: patient,
     },
     encounter: {
@@ -120,8 +120,8 @@ const ConditionForm = ({ datas }) => {
             {
               system:
                 "http://terminology.hl7.org/CodeSystem/condition-category",
-              code: "encounter-diagnosis",
-              display: "Encounter Diagnosis",
+              code: datas.codeICD,
+              display: datas.dx,
             },
           ],
         },
@@ -136,7 +136,7 @@ const ConditionForm = ({ datas }) => {
         ],
       },
       subject: {
-        reference: `Patient/${ihsPatient}`, // Updated to use ihsPatient
+        reference: `Patient/${ihsPatient ? ihsPatient.split('/')[2] : ''}`, // Updated to use ihsPatient
         display: patient,
       },
       encounter: {
