@@ -175,9 +175,21 @@ const SatuSehat = () => {
                       Condition
                     </Button>
                   </Link>
+
+                  <Link
+                    to={"/nadi"}
+                    state={{
+                      patient: patient.name,
+                      patientNIK: patient.identifier,
+                      codeICD: record.diagnosis.code,
+                      dx: record.diagnosis.name,
+                      nadi: record.heartRate,
+                    }}
+                  >
                   <Button className="inline-flex ml-2 mt-2 text-white bg-[#2196F3] border-0 rounded-md py-3 px-5 focus:outline-none hover:bg-2196F3 text-sm">
-                    Diagnosis
+                    Observation-Nadi
                   </Button>
+                  </Link>
                 </>
               ))}
             </div>

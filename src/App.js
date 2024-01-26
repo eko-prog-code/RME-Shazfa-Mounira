@@ -14,6 +14,7 @@ import UpdateTreatment from './Pages/UpdateTreatment';
 import SatuSehat from './Pages/SatuSehat';
 import Encounter from './Pages/Encounter'
 import Condition from './Pages/Condition';
+import ObsNadi from './Pages/ObsNadi';
 
 
 
@@ -36,6 +37,7 @@ const App = () => {
           <Route path="/service-setting" element={<ServiceSetting />} />
           <Route path="/list-belanja-obat" element={<ListBelanjaObat />} />
           <Route path="/condition" element={<Condition />} />
+          <Route path="/nadi" element={<ObsNadi />} />
         </Routes>
       </div>
     </Router>
