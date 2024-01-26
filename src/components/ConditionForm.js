@@ -60,7 +60,7 @@ const ConditionForm = ({ datas }) => {
       ],
     },
     subject: {
-      reference: `Patient/${ihsPatient ? ihsPatient.split('/')[2] : ''}`, // Updated to use ihsPatient
+      reference: `${ihsPatient}`, // Updated to use ihsPatient
       display: patient,
     },
     encounter: {
@@ -135,7 +135,7 @@ const ConditionForm = ({ datas }) => {
         ],
       },
       subject: {
-        reference: `Patient/${ihsPatient ? ihsPatient.split('/')[2] : ''}`, // Updated to use ihsPatient
+        reference: `${ihsPatient}`, // Updated to use ihsPatient
         display: patient,
       },
       encounter: {
