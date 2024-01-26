@@ -165,6 +165,7 @@ const SatuSehat = () => {
                     to={"/condition"}
                     state={{
                       patient: patient.name,
+                      patientNIK: patient.identifier,
                       observation: record.Observation,
                       codeICD: record.diagnosis.code,
                       dx: record.diagnosis.name,
