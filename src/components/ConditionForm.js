@@ -11,13 +11,6 @@ const ConditionForm = ({ datas }) => {
   const [ihsPatient, setIhsPatient] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    patient: "",
-    observation: "",
-    codeICD: "",
-    dx: "",
-  });
-
   useEffect(() => {
     const storedDataString = localStorage.getItem("encounter");
 
@@ -34,16 +27,6 @@ const ConditionForm = ({ datas }) => {
       console.error("No data found in local storage.");
     }
   }, []);
-
-  useEffect(() => {
-    // In ConditionForm component, just after receiving the data
-    console.log("Data received in ConditionForm:", {
-      patient: formData.patient,
-      observation: formData.observation,
-      codeICD: formData.code?.coding[0]?.code,
-      dx: formData.code?.coding[0]?.name,
-    });
-  }, [formData]);
 
   const initialFormData = {
     resourceType: "Condition",
@@ -95,6 +78,7 @@ const ConditionForm = ({ datas }) => {
   };
 
   const [accessToken, setAccessToken] = useState(null);
+
   const fetchTokenFromFirebase = async () => {
     try {
       const firebaseTokenUrl =
@@ -134,7 +118,8 @@ const ConditionForm = ({ datas }) => {
         {
           coding: [
             {
-              system: "http://terminology.hl7.org/CodeSystem/condition-category",
+              system:
+                "http://terminology.hl7.org/CodeSystem/condition-category",
               code: "encounter-diagnosis",
               display: "Encounter Diagnosis",
             },
@@ -171,30 +156,17 @@ const ConditionForm = ({ datas }) => {
       })
       .then((res) => {
         console.log("data: ", res);
-        localStorage.setItem("encounter", JSON.stringify(res));
-        resetForm();
+        localStorage.setItem("condition", JSON.stringify(data));
       })
       .catch((err) => console.error("Gagal mengirim data:", err.response))
       .finally(() => setLoading(false));
-  };
-
-  const resetForm = () => {
-    // Reset form logic here
-    setFormData({
-      patient: "",
-      observation: "",
-      codeICD: "",
-      dx: "",
-    });
   };
 
   return (
     <div className="card-container">
       <div className="glow-card">
         <Link to={"/satusehat"}>
-          <button className="back-button">
-            Back
-          </button>
+          <button className="back-button">Back</button>
         </Link>
         <h1>Condition Page</h1>
         <p className="info-text">Encounter ID: {encounterId}</p>
@@ -215,7 +187,6 @@ const ConditionForm = ({ datas }) => {
             </li>
           ))}
         </ul>
-
 
         <button
           className="submit-button"
