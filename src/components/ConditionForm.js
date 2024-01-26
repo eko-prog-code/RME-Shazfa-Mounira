@@ -9,6 +9,7 @@ const ConditionForm = ({ datas }) => {
   const [participant, setParticipant] = useState([]);
   const [patient, setPatient] = useState(null);
   const [ihsPatient, setIhsPatient] = useState(null);
+  const [ihsIdpatient, setIhsIdpatient] = useState("");
   const [loading, setLoading] = useState(false);
 
 useEffect(() => {
@@ -42,46 +43,58 @@ if (!ihsPatientReference) {
 
 
   const initialFormData = {
-    resourceType: "Condition",
-    clinicalStatus: {
-      coding: [
-        {
-          system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
-          code: "active",
-          display: "Active",
-        },
-      ],
-    },
-    category: [
+  resourceType: "Condition",
+  subjectReference: ihsIdpatient,
+  patientNik: datas.patientNIK,
+  clinicalStatus: {
+    coding: [
       {
-        coding: [
-          {
-            "system": "http://terminology.hl7.org/CodeSystem/condition-category",
-              "code": "encounter-diagnosis",
-              "display": "Encounter Diagnosis",
-          },
-        ],
+        system: "http://terminology.hl7.org/CodeSystem/condition-clinical",
+        code: "active",
+        display: "Active",
       },
     ],
-    code: {
+  },
+  category: [
+    {
       coding: [
         {
-          system: "http://hl7.org/fhir/sid/icd-10",
-          code: datas.codeICD,
-          display: datas.dx,
+          system: "http://terminology.hl7.org/CodeSystem/condition-category",
+          code: "encounter-diagnosis",
+          display: "Encounter Diagnosis",
         },
       ],
     },
-    subject: {
-      reference: ihsPatientReference,
-      display: patient,
-    },
-    encounter: {
-      reference: `Encounter/${encounterId}`, // Updated to use encounterId
-    },
-    onsetDateTime: date, // Updated to use date
-    recordedDate: date, // Updated to use date
-  };
+  ],
+  code: {
+    coding: [
+      {
+        system: "http://hl7.org/fhir/sid/icd-10",
+        code: datas.codeICD,
+        display: datas.dx,
+      },
+    ],
+  },
+  subject: {
+    reference: ihsPatientReference,
+    display: patient,
+  },
+  encounter: {
+    reference: `Encounter/${encounterId}`,
+  },
+  onsetDateTime: date,
+  recordedDate: date,
+  identifierSystem: "http://sys-ids.kemkes.go.id/encounter/dfd92855-8cec-4a10-be94-8edd8a097344",
+  identifierValue: ihsIdpatient,
+  participantReference: ihsId, // Assign ihsId here
+  participantDisplay: datas.participant,
+  // Add other form fields as needed
+};
+
+  useEffect(() => {
+    handleGetIHSpatient();
+  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -148,7 +161,7 @@ if (!ihsPatientReference) {
         ],
       },
       subject: {
-        reference: ihsPatientReference,
+       reference: initialFormData.subjectReference,
         display: patient,
       },
       encounter: {
@@ -172,6 +185,41 @@ if (!ihsPatientReference) {
       })
       .catch((err) => console.error("Gagal mengirim data:", err.response))
       .finally(() => setLoading(false));
+  };
+
+  const handleGetIHSpatient = async () => {
+    try {
+      if (!initialFormData.patientNik) {
+        console.error("Error: patientNik is not defined in formData");
+        return;
+      }
+
+      const tokenResponse = await axios.get(
+        "https://shazfabe.cyclic.app/getIHSpatient?identifier=" +
+          initialFormData.patientNik
+      );
+      const accessToken = tokenResponse.data.accessToken;
+
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      };
+
+      const apiUrl = `https://shazfabe.cyclic.app/getIHSpatient?identifier=${initialFormData.patientNik}`;
+
+      const response = await axios.get(apiUrl, { headers });
+      const data = response.data;
+
+      if (data.success) {
+        setIhsIdpatient(data.ihsIdpatient);
+      } else {
+        console.error("Error getting IHS Patient:", data.error);
+        throw new Error("Error getting IHS Patient");
+      }
+    } catch (error) {
+      console.error("Error getting or setting IHS Patient:", error);
+      throw error; // Propagate the error to saveData
+    }
   };
 
   return (
