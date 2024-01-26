@@ -28,7 +28,12 @@ const ConditionForm = ({ datas }) => {
     }
   }, []);
 
-  const ihsPatientReference = ihsPatient ? `Patient/${ihsPatient.split('/')[2]}` : '';
+  const ihsPatientReference = ihsPatient && ihsPatient.startsWith("Patient/") ? `Patient/${ihsPatient.split('/')[2]}` : '';
+
+if (!ihsPatientReference) {
+  console.error("Error: ihsPatientReference is undefined or has an unexpected format.");
+}
+
 
   const initialFormData = {
     resourceType: "Condition",
