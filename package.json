@@ -20,12 +20,13 @@
     "react-datepicker": "^4.21.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-icd10": "^1.0.9",
     "react-icons": "^4.11.0",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.18.0",
     "react-scripts": "5.0.1",
     "react-whatsapp-widget": "^2.2.0",
+    "sass": "^1.70.0",
+    "sweetalert2": "^11.10.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
