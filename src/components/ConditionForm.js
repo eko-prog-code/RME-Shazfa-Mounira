@@ -28,6 +28,8 @@ const ConditionForm = ({ datas }) => {
     }
   }, []);
 
+  const ihsPatientReference = ihsPatient ? `Patient/${ihsPatient.split('/')[2]}` : '';
+
   const initialFormData = {
     resourceType: "Condition",
     clinicalStatus: {
@@ -60,7 +62,7 @@ const ConditionForm = ({ datas }) => {
       ],
     },
     subject: {
-      reference: `${ihsPatient}`, // Updated to use ihsPatient
+      reference: ihsPatientReference,
       display: patient,
     },
     encounter: {
@@ -135,7 +137,7 @@ const ConditionForm = ({ datas }) => {
         ],
       },
       subject: {
-        reference: `${ihsPatient}`, // Updated to use ihsPatient
+        reference: ihsPatientReference,
         display: patient,
       },
       encounter: {
