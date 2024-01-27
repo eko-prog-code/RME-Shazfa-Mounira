@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "./ConditionForm.css";
+import Swal from "sweetalert2/dist/sweetalert2.js";
+import 'sweetalert2/src/sweetalert2.scss'
 
 const ConditionForm = ({ datas }) => {
   const [encounterId, setEncounterId] = useState("");
@@ -157,9 +159,36 @@ const ConditionForm = ({ datas }) => {
       })
       .then((res) => {
         console.log("data: ", res);
-        localStorage.setItem("condition", JSON.stringify(data));
+        
+      
+        if (res.data.issue && res.data) {
+          const issue = res.data.issue[0];
+
+          Swal.fire({
+            icon: 'error',
+            title: `Error: ${issue.expression[0]}`,
+            text: issue.details?.text || 'An error occurred. Please try again later.',
+          });
+        } else {
+         
+          
+          Swal.fire({
+            icon: 'success',
+          
+            text: 'success submit data',
+          });
+          localStorage.setItem("condition", JSON.stringify(data));
+        }
+        
       })
-      .catch((err) => console.error("Gagal mengirim data:", err.response))
+      .catch((err) => {
+        console.log("Gagal mengirim data:", err) 
+        Swal.fire({
+          icon: 'error',
+          title: `error`,
+          text: 'Gagal mengirim data',
+        });
+      })
       .finally(() => setLoading(false));
   };
 

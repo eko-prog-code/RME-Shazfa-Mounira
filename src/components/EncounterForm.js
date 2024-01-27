@@ -3,6 +3,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
 import "./Modal.css";
+import Swal from "sweetalert2/dist/sweetalert2.js";
+import 'sweetalert2/src/sweetalert2.scss'
+
 
 const EncounterForm = ({ datas }) => {
   const [ihsId, setIhsId] = useState("");
@@ -176,10 +179,36 @@ const EncounterForm = ({ datas }) => {
       })
       .then((res) => {
         console.log("data: ", res);
-        localStorage.setItem("encounter", JSON.stringify(res));
+       
+    
+        if (res.data.issue && res.data) {
+          const issue = res.data.issue[0];
+
+          Swal.fire({
+            icon: 'error',
+            title: `Error: ${issue.expression[0]}`,
+            text: issue.details?.text || 'An error occurred. Please try again later.',
+          });
+        } else {
+         
+          // const patient = res.data.subject[0];
+          Swal.fire({
+            icon: 'success',
+            // title: `${patient.reference}`,
+            text: 'success submit data',
+          });
+          localStorage.setItem("encounter", JSON.stringify(res));
+        }
         resetForm();
       })
-      .catch((err) => console.error("Gagal mengirim data:", err.response))
+      .catch((res) => {
+        console.log("Gagal mengirim data:", res.data) 
+        Swal.fire({
+          icon: 'error',
+          title: `error`,
+          text: 'Gagal mengirim data:',
+        });
+      })
       .finally(() => setLoading(false));
   };
 
