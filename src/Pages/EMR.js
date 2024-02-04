@@ -236,6 +236,7 @@ const EMR = () => {
                                 <p>HeartRate: {treatment.heartRate}</p>
                                 <p>BodyTemperature: {treatment.bodyTemperature}</p>
                                 <p>RespiratoryRate: {treatment.respiratoryRate}</p>
+                                <p>Body Weight: {treatment.bodyWeight}</p>
                                 <p>Terapi Obat: {treatment.Medication}</p>
                                 <p>Diagnosis Medis: {treatment.diagnosis.code} - {treatment.diagnosis.name}</p>
                                 <p>DPJP (Participant): {treatment.participant}</p>

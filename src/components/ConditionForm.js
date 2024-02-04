@@ -203,8 +203,8 @@ const ConditionForm = ({ datas }) => {
 
         <p className="info-text left-align-text">Patient Name: {patient}</p>
         <p className="info-text left-align-text">Patient ID: {ihsPatient}</p>
-        <p className="info-text left-align-text">Code ICD: {initialFormData.category[0].coding[0].code}</p>
-        <p className="info-text left-align-text">Dx Medis: {initialFormData.category[0].coding[0].display}</p>
+        <p className="info-text left-align-text">Code ICD: {datas.codeICD}</p>
+        <p className="info-text left-align-text">Dx Medis: {datas.dx}</p>
         <p className="info-text left-align-text">Date: {date}</p>
 
         <ul className="participant-list left-align-text">
