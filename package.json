@@ -25,6 +25,7 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.18.0",
     "react-scripts": "5.0.1",
+    "react-table": "^7.8.0",
     "react-whatsapp-widget": "^2.2.0",
     "sass": "^1.70.0",
     "sweetalert2": "^11.10.4",

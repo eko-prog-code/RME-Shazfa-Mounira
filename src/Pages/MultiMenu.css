@@ -1,0 +1,76 @@
+/* MultiMenu.css */
+
+.patient-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .patient-info {
+    flex-grow: 1;
+  }
+  
+  .patient-actions {
+    margin-left: 10px;
+  }
+
+  .button-open {
+    background-color: #007bff;
+    color: #fff; 
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    height: 50px;
+    width: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .delete-button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    height: 50px;
+    width: 100px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+  
+  .delete-button:hover {
+    background-color: #cc0000;
+  }
+
+/* MultiMenu.css */
+input::placeholder {
+    color: #007bff; /* Warna teks placeholder */
+    border: 1px solid #007bff; /* Warna border placeholder */
+  }
+
+  /* PatientCard.css */
+
+.input-with-blue-border {
+  border: 2px solid blue;
+  /* You can adjust the border properties (width, style, color) as needed */
+  padding: 8px; /* Optional: Add some padding for better visual appearance */
+}
+
+/* PatientCard.css */
+
+.red-button {
+  background-color: darkred;
+  color: white;
+  /* You can adjust the color and other styles as needed */
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+  
+  

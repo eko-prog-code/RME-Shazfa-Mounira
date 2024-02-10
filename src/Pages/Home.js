@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/id';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import MultiMenu from './MultiMenu';
 import CategoryObat from './CategoryObat';
 import Booking from './Booking';
 import JadwalPraktek from './JadwalPraktek';
@@ -150,6 +151,7 @@ const Home = () => {
                 />
             </div>
 
+            <MultiMenu />
             <CategoryObat />
             <Booking />
             <JadwalPraktek />
