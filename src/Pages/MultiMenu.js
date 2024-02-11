@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import PatientCard from './PatientCard';
 import { Link } from 'react-router-dom';
-import "./MultiMenu.css"
+import './MultiMenu.css';
+import PatientCard from './PatientCard';
 
 const MultiMenu = () => {
   const [patientList, setPatientList] = useState([]);
@@ -33,49 +33,173 @@ const MultiMenu = () => {
           id: key,
           ...response.data[key],
           isVisible: false,
+          isChecked: false,
+          StatusPeriksa: false, // Added StatusPeriksa
         }));
 
         setPatientList(patients);
       } else {
-        setPatientList([]); // Set patients to an empty array if there's no data
+        setPatientList([]);
       }
     } catch (error) {
       console.error('Error fetching patient list:', error);
-      setPatientList([]); // Set patients to an empty array in case of an error
+      setPatientList([]);
     }
   };
 
-  const getNextIndexAndAddPatient = async (patientId) => {
+  const toggleCheckStatus = async (patientId) => {
     try {
-      // Ambil nomor PatientIndex dari Firebase atau defaultkan ke 0 jika tidak ada
+      const updatedPatients = patientList.map((patient) => {
+        if (patient.id === patientId) {
+          return {
+            ...patient,
+            isChecked: !patient.isChecked,
+            StatusPeriksa: !patient.StatusPeriksa,
+          };
+        }
+        return patient;
+      });
+
+      const selectedPatient = updatedPatients.find((patient) => patient.id === patientId);
+
+      await axios.put(
+        `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patientId}.json`,
+        {
+          ...selectedPatient,
+        }
+      );
+
+      setPatientList(updatedPatients);
+    } catch (error) {
+      console.error('Error toggling check status:', error);
+    }
+  };
+
+  const handleAddToListClick = async (patientId) => {
+    console.log('Handle Add Clicked');
+    try {
       const currentPatientIndex = await getLastUsedIndex();
       const newPatientIndex = currentPatientIndex + 1;
-
+  
       const selectedPatient = patientList.find((patient) => patient.id === patientId);
-
+  
       if (selectedPatient && !selectedPatient.isIndexed) {
         selectedPatient.isIndexed = true;
         selectedPatient.isVisible = true;
-        selectedPatient.PatientIndex = newPatientIndex; // Atur nilai PatientIndex di objek yang sudah ada
-        selectedPatient.index = newPatientIndex; // Atur nilai index di objek yang sudah ada
-
-        // Simpan data pasien dengan nomor PatientIndex baru ke Firebase
+        selectedPatient.PatientIndex = newPatientIndex;
+        selectedPatient.index = newPatientIndex;
+        selectedPatient.StatusPeriksa = false; // Tambahkan StatusPeriksa dengan nilai false
+  
         await axios.put(
           `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patientId}.json`,
           selectedPatient
         );
-
-        // Simpan nomor PatientIndex baru ke Firebase
+  
         await updateLastUsedIndex(newPatientIndex);
-
-        // Perbarui indexedPatientList dengan pasien baru
+  
         setIndexedPatientList([...indexedPatientList, selectedPatient]);
       }
     } catch (error) {
-      console.error('Error adding patient:', error);
+      console.error('Error adding patient to list:', error);
+    }
+  };
+  
+
+  const getLastUsedIndex = async () => {
+    try {
+      const response = await axios.get(
+        'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json'
+      );
+      return response.data || 0;
+    } catch (error) {
+      console.error('Error fetching last used index:', error);
+      return 0;
     }
   };
 
+  const updateLastUsedIndex = async (newIndex) => {
+    try {
+      await axios.put(
+        'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json',
+        newIndex
+      );
+    } catch (error) {
+      console.error('Error updating last used index:', error);
+    }
+  };
+
+  const deleteAllIndexes = async () => {
+    // Menampilkan konfirmasi sebelum menghapus semua indeks
+    const isConfirmed = window.confirm("Apakah Anda Yakin akan menghapus Data ini?");
+  
+    if (isConfirmed) {
+      try {
+        const updatedPatients = await Promise.all(
+          patientList.map(async (patient) => {
+            if (patient.isIndexed) {
+              const { PatientIndex, index, isIndexed, isVisible, StatusPeriksa, isChecked, ...updatedPatient } = patient;
+  
+              await axios.put(
+                `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patient.id}.json`,
+                updatedPatient
+              );
+  
+              return updatedPatient;
+            }
+            return patient;
+          })
+        );
+  
+        await axios.delete(
+          'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json'
+        );
+  
+        await new Promise((resolve) => setTimeout(resolve, 500));
+  
+        const updatedLastUsedIndex = await getLastUsedIndex();
+  
+        console.log(
+          'Updated lastUsedIndex after deleting all indexes:',
+          updatedLastUsedIndex
+        );
+  
+        setPatientList(updatedPatients);
+        setIndexedPatientList([]);
+      } catch (error) {
+        console.error('Error deleting all indexes:', error);
+      }
+    }
+  };
+  
+  const handleDeleteClick = async (patientId) => {
+    // Menampilkan konfirmasi sebelum menghapus indeks tertentu
+    const isConfirmed = window.confirm("Apakah Anda Yakin akan menghapus Data ini?");
+  
+    if (isConfirmed) {
+      try {
+        const updatedPatients = await Promise.all(
+          patientList.map(async (patient) => {
+            if (patient.id === patientId && patient.isIndexed) {
+              const { PatientIndex, index, isIndexed, isVisible, StatusPeriksa, isChecked, ...updatedPatient } = patient;
+  
+              await axios.put(
+                `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patientId}.json`,
+                updatedPatient
+              );
+  
+              return updatedPatient;
+            }
+            return patient;
+          })
+        );
+  
+        setPatientList(updatedPatients);
+      } catch (error) {
+        console.error('Error deleting indexed patient:', error);
+      }
+    }
+  };
+  
 
   const handleSearchChange = (e) => {
     const searchTerm = e.target.value;
@@ -85,7 +209,9 @@ const MultiMenu = () => {
       if (patient.name) {
         return {
           ...patient,
-          isVisible: searchTerm === '' || patient.name.toLowerCase().includes(searchTerm.toLowerCase()),
+          isVisible:
+            searchTerm === '' ||
+            patient.name.toLowerCase().includes(searchTerm.toLowerCase()),
         };
       } else {
         return {
@@ -106,77 +232,14 @@ const MultiMenu = () => {
     setMenuOpen(false);
   };
 
-  // Fungsi untuk mendapatkan nomor index terakhir dari Firebase
-  const getLastUsedIndex = async () => {
-    try {
-      const response = await axios.get(
-        'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json'
-      );
-      return response.data || 0;
-    } catch (error) {
-      console.error('Error fetching last used index:', error);
-      return 0;
-    }
-  };
-
-  // Fungsi untuk memperbarui nomor index terakhir di Firebase
-  const updateLastUsedIndex = async (newIndex) => {
-    try {
-      await axios.put(
-        'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json',
-        newIndex
-      );
-    } catch (error) {
-      console.error('Error updating last used index:', error);
-    }
-  };
-
-  const deleteAllIndexes = async () => {
-    try {
-      // Hapus seluruh index pada setiap pasien di Firebase
-      const updatedPatients = await Promise.all(
-        patientList.map(async (patient) => {
-          if (patient.isIndexed) {
-            // Hapus properti yang tidak diinginkan
-            const { PatientIndex, index, isIndexed, isVisible, ...updatedPatient } = patient;
-
-            // Hapus index pada Firebase
-            await axios.put(
-              `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patient.id}.json`,
-              updatedPatient
-            );
-
-            return updatedPatient;
-          }
-          return patient;
-        })
-      );
-
-      // Hapus variabel lastUsedIndex pada Firebase
-      await axios.delete(
-        'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json'
-      );
-
-      // Jeda sejenak untuk memastikan pembaruan terbaru
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Ambil nilai terbaru lastUsedIndex setelah jeda
-      const updatedLastUsedIndex = await getLastUsedIndex();
-
-      console.log("Updated lastUsedIndex after deleting all indexes:", updatedLastUsedIndex);
-
-      // Update state dengan index yang sudah dihapus
-      setPatientList(updatedPatients);
-      setIndexedPatientList([]);
-    } catch (error) {
-      console.error('Error deleting all indexes:', error);
-    }
-  };
-
   return (
     <div>
-      <button onClick={toggleSlideDown} className="button-open">Open</button>
-      <button onClick={toggleSlideUp} className="delete-button">Close</button>
+      <button onClick={toggleSlideDown} className="button-open">
+        Open
+      </button>
+      <button onClick={toggleSlideUp} className="delete-button">
+        Close
+      </button>
 
       {isMenuOpen && (
         <>
@@ -201,9 +264,7 @@ const MultiMenu = () => {
                   <PatientCard
                     key={patient.id}
                     {...patient}
-                    isIndexed={patient.isIndexed}
-                    emrData={patient.emr}
-                    onAddClick={() => getNextIndexAndAddPatient(patient.id)}
+                    onAddClick={handleAddToListClick}
                   />
                 ))}
             </div>
@@ -216,8 +277,8 @@ const MultiMenu = () => {
                 key={patient.id}
                 {...patient}
                 index={index + 1}
-                emrData={patient.emr}
-                onAddClick={() => getNextIndexAndAddPatient(patient.id)}
+                onCheckClick={() => toggleCheckStatus(patient.id)}
+                onDeleteClick={handleDeleteClick} 
               />
             ))}
           </div>
