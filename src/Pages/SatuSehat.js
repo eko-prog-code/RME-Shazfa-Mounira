@@ -162,7 +162,7 @@ const SatuSehat = () => {
       <div>
         {filteredPatients.length > 0 ? (
           filteredPatients.map((patient) => (
-            <div key={patient.id} className="patient-card">
+            <div key={patient.id} className="patient-card-satu-sehat">
               <h2>
                 {patient.name}{" "}
                 <span className="generate-id-text">

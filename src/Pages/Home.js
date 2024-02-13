@@ -25,6 +25,7 @@ const Home = () => {
         birthDate: '',
         identifier: '',
         medicalRecordNumber: '',
+        whatsappNumber: '',
     });
 
 
@@ -45,6 +46,7 @@ const Home = () => {
             birthDate: dayjs(selectedDate).format('YYYY-MM-DD'),
             identifier: newPatientData.identifier,
             number_medical_records: newPatientData.medicalRecordNumber,
+            whatsappNumber: newPatientData.whatsappNumber,
             timestamp: new Date().toISOString(), // Add timestamp field
         };
 
@@ -52,7 +54,7 @@ const Home = () => {
             .post('https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients.json', newPatient)
             .then((response) => {
                 console.log('Data pasien baru terkirim:', response.data);
-                setNewPatientData({ name: '', birthDate: '', identifier: '', number_medical_records: '' });
+                setNewPatientData({ name: '', birthDate: '', identifier: '', number_medical_records: '', whatsappNumber: '', });
                 setSelectedDate(null);
                 setSelectedYear('');
                 closeModal();
@@ -185,6 +187,16 @@ const Home = () => {
                 </Link>
             </div>
 
+            <div className="image-button-container-SatuSehat">
+                <Link to="/wa">
+                    <img
+                        src="https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/HomeButton%2FWaBlast.png?alt=media&token=96de77da-a8bb-49a6-8303-54b80c00c51b"
+                        alt="wa blast"
+                        className="image-button-SatuSehat"
+                    />
+                </Link>
+            </div>
+
             {isFormVisible && (
                 <div className="modal-background" onClick={closeModal}>
                     <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -223,6 +235,18 @@ const Home = () => {
                                             // Update the correct field, change 'nik' to 'medicalRecordNumber'
                                         }}
                                     />
+
+                                    <input
+                                        type="tel" // Use type "tel" for numeric input
+                                        className="new-patient-input"
+                                        placeholder="Nomor WhatsApp"
+                                        value={newPatientData.whatsappNumber}
+                                        onChange={(e) => {
+                                            const numericValue = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+                                            setNewPatientData({ ...newPatientData, whatsappNumber: numericValue });
+                                        }}
+                                    />
+
 
 
                                     <DatePicker

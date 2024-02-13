@@ -56,7 +56,7 @@ const PediatricDrug = () => {
           onChange={(e) => setBeratBadan(e.target.value)}
         />
         <button
-          className="bg-blue-500 text-white p-2 rounded-md ml-2"
+          className="bg-blue-500 text-white p-2 rounded-md ml-2 mt-2"
           onClick={handleSearch}
         >
           Cari
@@ -71,7 +71,7 @@ const PediatricDrug = () => {
           />
         </div>
       ) : (
-        <div className="card-container">
+        <div className="card-container-drug">
           {filteredData.length === 0 ? (
             <p>Opps, Data yang Anda Cari belum ada..!!</p>
           ) : (

@@ -12,6 +12,7 @@ import ServiceSetting from './Pages/ServiceSetting';
 import ListBelanjaObat from './Pages/ListBelanjaObat';
 import UpdateTreatment from './Pages/UpdateTreatment';
 import SatuSehat from './Pages/SatuSehat';
+import WaBlast from './Pages/WaBlast';
 import Encounter from './Pages/Encounter'
 import Condition from './Pages/Condition';
 import ObsNadi from './Pages/ObsNadi';
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/emr/:id/update-treatment/:treatmentId" element={<UpdateTreatment />} />
           <Route path="/internis" element={<InternisDrug />} />
           <Route path="/satusehat" element={<SatuSehat />} />
+          <Route path="/wa" element={<WaBlast />} />
           <Route path="/encounter" element={<Encounter />} />
           <Route path="/pediatric" element={<PediatricDrug />} />
           <Route path="/tooth-drug" element={<ToothDrug />} /> {/* New route for ToothDrug */}

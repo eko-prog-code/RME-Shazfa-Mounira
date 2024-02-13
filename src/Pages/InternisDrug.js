@@ -42,6 +42,7 @@ const InternisDrug = () => {
           placeholder="Cari Resep Obat berdasarkan Diagnosa Medis..."
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
+          style={{ width: '650px' }}
         />
       </div>
       {loading ? (
@@ -50,7 +51,7 @@ const InternisDrug = () => {
           <img src="/Animation.gif" alt="Loading Animation" style={{ width: '100px', height: '100px' }} />
         </div>
       ) : (
-        <div className="card-container">
+        <div className="card-container-drug">
           {filteredData.map((item) => (
             <div className="card" key={item.id}>
               <h3>{item.title}</h3>

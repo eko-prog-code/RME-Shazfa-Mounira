@@ -80,30 +80,30 @@ const MultiMenu = () => {
     try {
       const currentPatientIndex = await getLastUsedIndex();
       const newPatientIndex = currentPatientIndex + 1;
-  
+
       const selectedPatient = patientList.find((patient) => patient.id === patientId);
-  
+
       if (selectedPatient && !selectedPatient.isIndexed) {
         selectedPatient.isIndexed = true;
         selectedPatient.isVisible = true;
         selectedPatient.PatientIndex = newPatientIndex;
         selectedPatient.index = newPatientIndex;
         selectedPatient.StatusPeriksa = false; // Tambahkan StatusPeriksa dengan nilai false
-  
+
         await axios.put(
           `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patientId}.json`,
           selectedPatient
         );
-  
+
         await updateLastUsedIndex(newPatientIndex);
-  
+
         setIndexedPatientList([...indexedPatientList, selectedPatient]);
       }
     } catch (error) {
       console.error('Error adding patient to list:', error);
     }
   };
-  
+
 
   const getLastUsedIndex = async () => {
     try {
@@ -131,38 +131,38 @@ const MultiMenu = () => {
   const deleteAllIndexes = async () => {
     // Menampilkan konfirmasi sebelum menghapus semua indeks
     const isConfirmed = window.confirm("Apakah Anda Yakin akan menghapus Data ini?");
-  
+
     if (isConfirmed) {
       try {
         const updatedPatients = await Promise.all(
           patientList.map(async (patient) => {
             if (patient.isIndexed) {
               const { PatientIndex, index, isIndexed, isVisible, StatusPeriksa, isChecked, ...updatedPatient } = patient;
-  
+
               await axios.put(
                 `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patient.id}.json`,
                 updatedPatient
               );
-  
+
               return updatedPatient;
             }
             return patient;
           })
         );
-  
+
         await axios.delete(
           'https://rme-shazfa-mounira-default-rtdb.firebaseio.com/lastUsedIndex.json'
         );
-  
+
         await new Promise((resolve) => setTimeout(resolve, 500));
-  
+
         const updatedLastUsedIndex = await getLastUsedIndex();
-  
+
         console.log(
           'Updated lastUsedIndex after deleting all indexes:',
           updatedLastUsedIndex
         );
-  
+
         setPatientList(updatedPatients);
         setIndexedPatientList([]);
       } catch (error) {
@@ -170,36 +170,36 @@ const MultiMenu = () => {
       }
     }
   };
-  
+
   const handleDeleteClick = async (patientId) => {
     // Menampilkan konfirmasi sebelum menghapus indeks tertentu
     const isConfirmed = window.confirm("Apakah Anda Yakin akan menghapus Data ini?");
-  
+
     if (isConfirmed) {
       try {
         const updatedPatients = await Promise.all(
           patientList.map(async (patient) => {
             if (patient.id === patientId && patient.isIndexed) {
               const { PatientIndex, index, isIndexed, isVisible, StatusPeriksa, isChecked, ...updatedPatient } = patient;
-  
+
               await axios.put(
                 `https://rme-shazfa-mounira-default-rtdb.firebaseio.com/patients/${patientId}.json`,
                 updatedPatient
               );
-  
+
               return updatedPatient;
             }
             return patient;
           })
         );
-  
+
         setPatientList(updatedPatients);
       } catch (error) {
         console.error('Error deleting indexed patient:', error);
       }
     }
   };
-  
+
 
   const handleSearchChange = (e) => {
     const searchTerm = e.target.value;
@@ -248,12 +248,15 @@ const MultiMenu = () => {
             placeholder="Search Patient"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="input-with-blue-border"
+            className="input-with-blue-border rounded-full ml-16 mr-16"
+            style={{ width: '850px' }}
           />
 
+          <div>
           <button onClick={deleteAllIndexes} className="delete-button">
             Delete All Index
           </button>
+          </div>
 
           {searchTerm && (
             <div>
@@ -278,7 +281,7 @@ const MultiMenu = () => {
                 {...patient}
                 index={index + 1}
                 onCheckClick={() => toggleCheckStatus(patient.id)}
-                onDeleteClick={handleDeleteClick} 
+                onDeleteClick={handleDeleteClick}
               />
             ))}
           </div>

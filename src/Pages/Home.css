@@ -39,7 +39,7 @@
   width: 360px;
   text-align: center;
   /* Set a maximum height for the modal content */
-  max-height: 80vh;
+  max-height: 140vh;
   /* You can adjust the percentage as needed */
   overflow-y: auto;
 }

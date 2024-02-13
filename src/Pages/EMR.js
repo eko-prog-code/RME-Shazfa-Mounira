@@ -142,6 +142,7 @@ const EMR = () => {
                                 <p>Nomor RM     : {patientDetails.number_medical_records}</p>
                                 <p>Nama         : {patientDetails.name}</p>
                                 <p>Tanggal Lahir: {patientDetails.birthDate}</p>
+                                <p>No WhatsApp: {patientDetails.whatsappNumber}</p>
                             </div>
                             <div>
                                 <h5>

@@ -4,8 +4,8 @@ import './PatientCard.css';
 
 const PatientCard = ({ id, index, name, birthDate, isIndexed, emrData, onAddClick, onCheckClick, onDeleteClick, StatusPeriksa }) => {
   return (
-    <div className="patient-card">
-      <div className="patient-info">
+    <div className="patient-list">
+      <div className="patient-info-list">
         <p>Index: {index}</p>
         <p>Name: {name}</p>
         <p>ID: {id}</p>

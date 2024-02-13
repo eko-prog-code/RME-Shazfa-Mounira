@@ -1,5 +1,5 @@
 /* PatientCard.css */
-.patient-card {
+.patient-list {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
@@ -8,7 +8,7 @@
   background-color: #fff;
 }
 
-.patient-info {
+.patient-info-list {
   display: flex;
   justify-content: space-between;
   align-items: center;
