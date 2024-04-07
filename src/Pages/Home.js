@@ -190,7 +190,7 @@ const Home = () => {
             <div className="image-button-container-SatuSehat">
                 <Link to="/wa">
                     <img
-                        src="https://firebasestorage.googleapis.com/v0/b/rme-shazfa-mounira.appspot.com/o/HomeButton%2FWaBlast.png?alt=media&token=96de77da-a8bb-49a6-8303-54b80c00c51b"
+                        src="https://firebasestorage.googleapis.com/v0/b/emr-q-b0576.appspot.com/o/Export%20Contact%20Pasien.png?alt=media&token=b3dede84-1178-4a94-8906-cf0484fbd66f"
                         alt="wa blast"
                         className="image-button-SatuSehat"
                     />
